@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>mill — Turn research into shareable artifacts</title>
 <meta name="description" content="Export sprint research to PDF, CSV, JSON-LD, and static sites. Zero dependencies.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="mill — Turn research into shareable artifacts">
+<meta property="og:description" content="Export sprint research to PDF, CSV, JSON-LD, and static sites. Zero dependencies.">
+<meta property="og:url" content="https://grainulator.github.io/mill/">
+<link rel="canonical" href="https://grainulator.github.io/mill/">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2309090b'/><text x='32' y='48' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='44' fill='%23d97706'>m</text></svg>">
 <style>
 :root {
@@ -131,7 +136,7 @@ footer a{color:var(--text-2)}
       <a href="#quickstart">Quick Start</a>
       <a href="#example">Example</a>
       <a href="#features">Features</a>
-      <a href="https://github.com/aid-ninja/mill" class="nav-cta">GitHub</a>
+      <a href="https://github.com/grainulator/mill" class="nav-cta">GitHub</a>
     </div>
   </div>
 </nav>
@@ -159,8 +164,8 @@ footer a{color:var(--text-2)}
         <h3>Export to CSV</h3>
         <p>Pull all claims into a spreadsheet for analysis, stakeholder review, or compliance documentation.</p>
         <div class="copy-wrap">
-          <div class="qs-code"><span class="dim">$</span> mill export --format csv claims.json</div>
-          <button class="copy-btn" onclick="copyText(this,'mill export --format csv claims.json')">Copy</button>
+          <div class="qs-code"><span class="dim">$</span> npx @grainulator/mill export --format csv claims.json</div>
+          <button class="copy-btn" onclick="copyText(this,'npx @grainulator/mill export --format csv claims.json')">Copy</button>
         </div>
       </div>
       <div class="qs-step rv rv-d2">
@@ -168,8 +173,8 @@ footer a{color:var(--text-2)}
         <h3>Export to PDF</h3>
         <p>Turn your HTML brief into a polished PDF you can email or attach to a ticket.</p>
         <div class="copy-wrap">
-          <div class="qs-code"><span class="dim">$</span> mill export --format pdf output/brief.html</div>
-          <button class="copy-btn" onclick="copyText(this,'mill export --format pdf output/brief.html')">Copy</button>
+          <div class="qs-code"><span class="dim">$</span> npx @grainulator/mill export --format pdf output/brief.html</div>
+          <button class="copy-btn" onclick="copyText(this,'npx @grainulator/mill export --format pdf output/brief.html')">Copy</button>
         </div>
       </div>
       <div class="qs-step rv rv-d3">
@@ -177,8 +182,8 @@ footer a{color:var(--text-2)}
         <h3>Publish static site</h3>
         <p>Generate a complete static site from your sprint output. Deploy to GitHub Pages or any host.</p>
         <div class="copy-wrap">
-          <div class="qs-code"><span class="dim">$</span> mill publish --target static output/</div>
-          <button class="copy-btn" onclick="copyText(this,'mill publish --target static output/')">Copy</button>
+          <div class="qs-code"><span class="dim">$</span> npx @grainulator/mill publish --target static output/</div>
+          <button class="copy-btn" onclick="copyText(this,'npx @grainulator/mill publish --target static output/')">Copy</button>
         </div>
       </div>
     </div>
@@ -194,21 +199,21 @@ footer a{color:var(--text-2)}
     <p class="section-sub rv rv-d2">You have finished a wheat sprint about database migration. Now you need artifacts for the architecture review meeting.</p>
 
     <div class="term-block rv rv-d3">
-<span class="prompt">$</span> <span class="cmd">mill export --format pdf output/brief.html</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill export --format pdf output/brief.html</span>
 <span class="output">Converting output/brief.html to PDF...</span>
 <span class="success">Written: output/brief.pdf (142KB, 4 pages)</span>
 
-<span class="prompt">$</span> <span class="cmd">mill export --format csv claims.json</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill export --format csv claims.json</span>
 <span class="output">Extracting 23 claims...</span>
 <span class="success">Written: claims.csv</span>
 <span class="output">  Columns: id, type, claim, evidence_tier, confidence, source, superseded_by</span>
 <span class="output">  23 rows, ready for Excel / Google Sheets</span>
 
-<span class="prompt">$</span> <span class="cmd">mill convert --from html --to markdown output/brief.html</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill convert --from html --to markdown output/brief.html</span>
 <span class="success">Written: output/brief.md</span>
 <span class="output">  Clean markdown with frontmatter. Paste into Notion, Confluence, or GitHub.</span>
 
-<span class="prompt">$</span> <span class="cmd">mill publish --target static output/</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill publish --target static output/</span>
 <span class="success">Static site generated in dist/</span>
 <span class="output">  3 pages, 1 index, all assets inlined. Deploy anywhere.</span>
     </div>
@@ -264,19 +269,19 @@ footer a{color:var(--text-2)}
     <h2 class="section-title rv rv-d1">The output layer</h2>
     <p class="section-sub rv rv-d2" style="margin-left:auto;margin-right:auto">Wheat researches. The compiler validates. Mill turns it into artifacts you can share.</p>
     <div class="eco-grid rv rv-d3">
-      <a href="https://github.com/aid-ninja/wheat" class="eco-chip"><span class="eco-dot" style="background:#fbbf24"></span>wheat -- research sprints</a>
-      <a href="https://github.com/aid-ninja/farmer" class="eco-chip"><span class="eco-dot" style="background:#22c55e"></span>farmer -- permission dashboard</a>
-      <a href="https://github.com/aid-ninja/grove" class="eco-chip"><span class="eco-dot" style="background:#10b981"></span>grove -- shared tools</a>
-      <a href="https://github.com/aid-ninja/silo" class="eco-chip"><span class="eco-dot" style="background:#3b82f6"></span>silo -- knowledge packs</a>
-      <a href="https://github.com/aid-ninja/harvest" class="eco-chip"><span class="eco-dot" style="background:#f97316"></span>harvest -- analytics</a>
-      <a href="https://github.com/aid-ninja/field" class="eco-chip"><span class="eco-dot" style="background:#a16207"></span>field -- orchestration</a>
+      <a href="https://grainulator.github.io/wheat/" class="eco-chip"><span class="eco-dot" style="background:#fbbf24"></span>wheat -- research sprints</a>
+      <a href="https://grainulator.github.io/farmer/" class="eco-chip"><span class="eco-dot" style="background:#22c55e"></span>farmer -- permission dashboard</a>
+      <a href="https://grainulator.github.io/grove/" class="eco-chip"><span class="eco-dot" style="background:#10b981"></span>grove -- shared tools</a>
+      <a href="https://grainulator.github.io/silo/" class="eco-chip"><span class="eco-dot" style="background:#3b82f6"></span>silo -- knowledge packs</a>
+      <a href="https://grainulator.github.io/harvest/" class="eco-chip"><span class="eco-dot" style="background:#f97316"></span>harvest -- analytics</a>
+      <a href="https://grainulator.github.io/field/" class="eco-chip"><span class="eco-dot" style="background:#a16207"></span>field -- orchestration</a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="container">
-    <p>mill &middot; MIT License &middot; <a href="https://github.com/aid-ninja/mill">GitHub</a> &middot; <a href="https://github.com/aid-ninja/mill#readme">Docs</a></p>
+    <p>mill &middot; MIT License &middot; <a href="https://github.com/grainulator/mill">GitHub</a> &middot; <a href="https://github.com/grainulator/mill#readme">Docs</a></p>
   </div>
 </footer>
 
