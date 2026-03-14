@@ -20,11 +20,10 @@
     "json-ld",
     "publishing"
   ],
-  "author": "",
+  "author": "grainulator contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aid-ninja/grainulator.git",
-    "directory": "mill"
+    "url": "https://github.com/grainulator/mill.git"
   }
 }

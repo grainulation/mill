@@ -50,6 +50,11 @@ function main() {
   const command = args[0];
   const handler = COMMANDS[command];
 
+  if (command === 'help') {
+    console.log(USAGE);
+    process.exit(0);
+  }
+
   if (!handler) {
     console.error(`Unknown command: ${command}`);
     console.error(`Run "mill --help" for usage.`);
@@ -60,14 +65,24 @@ function main() {
 }
 
 async function runExport(args) {
-  const { values, positionals } = parseArgs({
-    args,
-    options: {
-      format: { type: 'string', short: 'f' },
-      output: { type: 'string', short: 'o' },
-    },
-    allowPositionals: true,
-  });
+  let values, positionals;
+  try {
+    ({ values, positionals } = parseArgs({
+      args,
+      options: {
+        format: { type: 'string', short: 'f' },
+        output: { type: 'string', short: 'o' },
+      },
+      allowPositionals: true,
+    }));
+  } catch (err) {
+    if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
+      console.error(`Unknown option: ${flag}. Run "mill export --help" for usage.`);
+      process.exit(1);
+    }
+    throw err;
+  }
 
   if (!values.format) {
     console.error('Missing --format. Options: pdf, csv, markdown, json-ld');
@@ -105,14 +120,24 @@ async function runExport(args) {
 }
 
 async function runPublish(args) {
-  const { values, positionals } = parseArgs({
-    args,
-    options: {
-      target: { type: 'string', short: 't' },
-      output: { type: 'string', short: 'o' },
-    },
-    allowPositionals: true,
-  });
+  let values, positionals;
+  try {
+    ({ values, positionals } = parseArgs({
+      args,
+      options: {
+        target: { type: 'string', short: 't' },
+        output: { type: 'string', short: 'o' },
+      },
+      allowPositionals: true,
+    }));
+  } catch (err) {
+    if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
+      console.error(`Unknown option: ${flag}. Run "mill publish --help" for usage.`);
+      process.exit(1);
+    }
+    throw err;
+  }
 
   if (!values.target) {
     console.error('Missing --target. Options: static, clipboard');
@@ -148,15 +173,25 @@ async function runPublish(args) {
 }
 
 async function runConvert(args) {
-  const { values, positionals } = parseArgs({
-    args,
-    options: {
-      from: { type: 'string' },
-      to: { type: 'string' },
-      output: { type: 'string', short: 'o' },
-    },
-    allowPositionals: true,
-  });
+  let values, positionals;
+  try {
+    ({ values, positionals } = parseArgs({
+      args,
+      options: {
+        from: { type: 'string' },
+        to: { type: 'string' },
+        output: { type: 'string', short: 'o' },
+      },
+      allowPositionals: true,
+    }));
+  } catch (err) {
+    if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
+      console.error(`Unknown option: ${flag}. Run "mill convert --help" for usage.`);
+      process.exit(1);
+    }
+    throw err;
+  }
 
   if (!values.from || !values.to) {
     console.error('Missing --from and/or --to format.');
