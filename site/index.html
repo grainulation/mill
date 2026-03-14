@@ -42,13 +42,13 @@
 <section class="what-is" id="what"><div class="container"><div class="what-box rv"><h2>What is mill?</h2><p>Wheat is a research framework that helps you make technical decisions by collecting evidence into "claims." When your research is done, you have an HTML brief and a claims.json file. Mill takes those outputs and converts them into other formats: PDF documents you can email, CSV files you can open in Excel, Markdown you can paste into Confluence, or static sites you can deploy to GitHub Pages. It is the export layer for the grainulator ecosystem.</p></div></div></section>
 <hr class="sep">
 <section class="quickstart" id="quickstart"><div class="container"><div class="qs-label rv">Quick start -- 3 commands</div><div class="qs-steps">
-  <div class="qs-step rv rv-d1"><div class="qs-num">1</code></pre><h3>Export to PDF</h3><p>Turn your HTML brief into a polished PDF for email or print.</p><div class="copy-wrap"><pre class="qs-code"><code><span class="dim">$</span> mill export --format pdf output/brief.html</div><button class="copy-btn" onclick="copyText(this,'mill export --format pdf output/brief.html')">Copy</button></div><div class="qs-output">Converting output/brief.html to PDF...
+  <div class="qs-step rv rv-d1"><div class="qs-num">1</code></pre><h3>Export to PDF</h3><p>Turn your HTML brief into a polished PDF for email or print.</p><div class="copy-wrap"><pre class="qs-code"><code><span class="dim">$</span> npx @grainulator/mill export --format pdf output/brief.html</div><button class="copy-btn" onclick="copyText(this,'npx @grainulator/mill export --format pdf output/brief.html')">Copy</button></div><div class="qs-output">Converting output/brief.html to PDF...
 Written: output/brief.pdf (142KB, 4 pages)</div></div>
-  <div class="qs-step rv rv-d2"><div class="qs-num">2</code></pre><h3>Export to CSV</h3><p>Pull all claims into a spreadsheet for analysis or compliance docs.</p><div class="copy-wrap"><pre class="qs-code"><code><span class="dim">$</span> mill export --format csv claims.json</div><button class="copy-btn" onclick="copyText(this,'mill export --format csv claims.json')">Copy</button></div><div class="qs-output">Extracting 23 claims...
+  <div class="qs-step rv rv-d2"><div class="qs-num">2</code></pre><h3>Export to CSV</h3><p>Pull all claims into a spreadsheet for analysis or compliance docs.</p><div class="copy-wrap"><pre class="qs-code"><code><span class="dim">$</span> npx @grainulator/mill export --format csv claims.json</div><button class="copy-btn" onclick="copyText(this,'npx @grainulator/mill export --format csv claims.json')">Copy</button></div><div class="qs-output">Extracting 23 claims...
 Written: claims.csv
   Columns: id, type, claim, evidence_tier,
   confidence, source, superseded_by</div></div>
-  <div class="qs-step rv rv-d3"><div class="qs-num">3</code></pre><h3>Publish static site</h3><p>Generate a deployable site from your sprint output.</p><div class="copy-wrap"><pre class="qs-code"><code><span class="dim">$</span> mill publish --target static output/</div><button class="copy-btn" onclick="copyText(this,'mill publish --target static output/')">Copy</button></div><div class="qs-output">Static site generated in dist/
+  <div class="qs-step rv rv-d3"><div class="qs-num">3</code></pre><h3>Publish static site</h3><p>Generate a deployable site from your sprint output.</p><div class="copy-wrap"><pre class="qs-code"><code><span class="dim">$</span> npx @grainulator/mill publish --target static output/</div><button class="copy-btn" onclick="copyText(this,'npx @grainulator/mill publish --target static output/')">Copy</button></div><div class="qs-output">Static site generated in dist/
   3 pages, all assets inlined.
   Deploy to GitHub Pages or S3.</div></div>
 </div></div></section>
@@ -73,14 +73,14 @@ output/brief.md    -- clean markdown
 dist/              -- static site, 3 pages</pre></div>
   </div>
   <div class="term-block rv rv-d4" style="margin-top:24px">
-<span class="prompt">$</span> <span class="cmd">mill export --format pdf output/brief.html</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill export --format pdf output/brief.html</span>
 <span class="success">Written: output/brief.pdf (142KB, 4 pages)</span>
 
-<span class="prompt">$</span> <span class="cmd">mill export --format csv claims.json</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill export --format csv claims.json</span>
 <span class="success">Written: claims.csv</span>
 <span class="output">  23 rows, ready for Excel / Google Sheets</span>
 
-<span class="prompt">$</span> <span class="cmd">mill convert --from html --to markdown output/brief.html</span>
+<span class="prompt">$</span> <span class="cmd">npx @grainulator/mill convert --from html --to markdown output/brief.html</span>
 <span class="success">Written: output/brief.md</span>
 <span class="output">  Clean markdown with frontmatter. Paste into Notion or Confluence.</span></div>
 </div></section>
