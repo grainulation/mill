@@ -1,0 +1,30 @@
+{
+  "name": "@grainulator/mill",
+  "version": "0.1.0",
+  "description": "Turn wheat sprint artifacts into shareable formats",
+  "main": "lib/formats.js",
+  "bin": {
+    "mill": "bin/mill.js"
+  },
+  "scripts": {
+    "test": "node test/basic.test.js",
+    "start": "node bin/mill.js"
+  },
+  "keywords": [
+    "wheat",
+    "sprint",
+    "export",
+    "pdf",
+    "csv",
+    "markdown",
+    "json-ld",
+    "publishing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aid-ninja/grainulator.git",
+    "directory": "mill"
+  }
+}
