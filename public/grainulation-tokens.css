@@ -78,21 +78,21 @@
   --transition-base: 0.15s ease;
   --transition-slow: 0.3s ease;
 
-  /* Accent (default: neutral / barn red) */
-  --accent:        #ef4444;
-  --accent-light:  #f87171;
-  --accent-dim:    rgba(239, 68, 68, 0.12);
-  --accent-border: rgba(239, 68, 68, 0.25);
+  /* Accent (default: barn rose-red) */
+  --accent:        #e11d48;
+  --accent-light:  #fb7185;
+  --accent-dim:    rgba(225, 29, 72, 0.12);
+  --accent-border: rgba(225, 29, 72, 0.25);
 }
 
 
 /* 2. PER-TOOL ACCENT OVERRIDES */
 
 [data-tool="barn"] {
-  --accent:        #ef4444;
-  --accent-light:  #f87171;
-  --accent-dim:    rgba(239, 68, 68, 0.12);
-  --accent-border: rgba(239, 68, 68, 0.25);
+  --accent:        #e11d48;
+  --accent-light:  #fb7185;
+  --accent-dim:    rgba(225, 29, 72, 0.12);
+  --accent-border: rgba(225, 29, 72, 0.25);
 }
 
 [data-tool="wheat"] {
@@ -124,10 +124,10 @@
 }
 
 [data-tool="orchard"] {
-  --accent:        #a78bfa;
-  --accent-light:  #c4b5fd;
-  --accent-dim:    rgba(167, 139, 250, 0.10);
-  --accent-border: rgba(167, 139, 250, 0.25);
+  --accent:        #14b8a6;
+  --accent-light:  #2dd4bf;
+  --accent-dim:    rgba(20, 184, 166, 0.10);
+  --accent-border: rgba(20, 184, 166, 0.25);
 }
 
 [data-tool="farmer"] {
@@ -138,10 +138,10 @@
 }
 
 [data-tool="grainulator"] {
-  --accent:        #e2e8f0;
-  --accent-light:  #f1f5f9;
-  --accent-dim:    rgba(226, 232, 240, 0.08);
-  --accent-border: rgba(226, 232, 240, 0.20);
+  --accent:        #9ca3af;
+  --accent-light:  #d1d5db;
+  --accent-dim:    rgba(156, 163, 175, 0.10);
+  --accent-border: rgba(156, 163, 175, 0.25);
 }
 
 
