@@ -4,22 +4,27 @@
 
 const path = require('node:path');
 const { parseArgs } = require('node:util');
+const { fork } = require('node:child_process');
+
+const LIB_DIR = path.join(__dirname, '..', 'lib');
 
 const COMMANDS = {
   export: { description: 'Export artifacts to a target format', handler: runExport },
   publish: { description: 'Publish sprint outputs to a destination', handler: runPublish },
   convert: { description: 'Convert between artifact formats', handler: runConvert },
   formats: { description: 'List available export formats', handler: runFormats },
+  serve: { description: 'Start the export workbench UI', handler: runServe },
 };
 
 const USAGE = `
 mill -- turn sprint evidence into shareable artifacts
 
 Usage:
-  mill export  --format <fmt> <file>     Export artifact to target format
-  mill publish --target <dest> <dir>     Publish sprint outputs
+  mill serve   [--port 9094] [--source <dir>]  Start the export workbench UI
+  mill export  --format <fmt> <file>           Export artifact to target format
+  mill publish --target <dest> <dir>           Publish sprint outputs
   mill convert --from <fmt> --to <fmt> <file>  Convert between formats
-  mill formats                           List available formats
+  mill formats                                 List available formats
 
 Export formats:
   pdf        HTML or Markdown to PDF (via npx md-to-pdf)
@@ -32,6 +37,7 @@ Publish targets:
   clipboard  Copy formatted output to system clipboard
 
 Examples:
+  npx @grainulation/mill serve --port 9094 --source /path/to/sprint
   npx @grainulation/mill export --format pdf output/brief.html
   npx @grainulation/mill export --format csv claims.json
   npx @grainulation/mill export --format json-ld claims.json -o claims.jsonld
@@ -53,6 +59,12 @@ function main() {
   if (command === 'help') {
     console.log(USAGE);
     process.exit(0);
+  }
+
+  // serve command forks the ESM server module
+  if (command === 'serve') {
+    runServe(args.slice(1));
+    return;
   }
 
   if (!handler) {
@@ -235,6 +247,12 @@ function runFormats() {
   for (const t of formats.listPublishTargets()) {
     console.log(`  ${t}`);
   }
+}
+
+function runServe(args) {
+  const serverPath = path.join(LIB_DIR, 'server.js');
+  const child = fork(serverPath, args, { stdio: 'inherit' });
+  child.on('exit', (code) => process.exit(code ?? 0));
 }
 
 main();

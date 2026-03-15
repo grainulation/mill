@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en" data-tool="mill">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mill — export workbench</title>
+  <link rel="stylesheet" href="grainulation-tokens.css">
+  <style>
+    /* ── Layout ── */
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md) var(--space-xl);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .logo {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-sub {
+      font-size: var(--text-sm);
+      color: var(--fg3);
+      font-weight: 400;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: var(--text-sm);
+      color: var(--fg2);
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--bg3);
+      border-radius: var(--radius-sm);
+    }
+
+    .status-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .status-badge .dot.offline { background: var(--red); }
+
+    /* ── Main content ── */
+    .main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-section {
+      padding: var(--space-lg);
+    }
+
+    .sidebar-section + .sidebar-section {
+      border-top: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--fg3);
+      margin-bottom: var(--space-md);
+    }
+
+    /* ── Format cards ── */
+    .format-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .format-card:hover {
+      border-color: var(--accent-border);
+      background: var(--accent-dim);
+    }
+
+    .format-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 0 1px var(--accent-border);
+    }
+
+    .format-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-xs);
+    }
+
+    .format-name {
+      font-size: var(--text-md);
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .format-ext {
+      font-size: var(--text-xs);
+      font-family: var(--font-mono);
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .format-desc {
+      font-size: var(--text-sm);
+      color: var(--fg2);
+      line-height: 1.4;
+    }
+
+    .format-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+      font-size: var(--text-xs);
+      color: var(--fg3);
+    }
+
+    /* ── Source info ── */
+    .source-info {
+      font-size: var(--text-sm);
+      color: var(--fg2);
+    }
+
+    .source-path {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--fg3);
+      word-break: break-all;
+      margin-top: var(--space-xs);
+    }
+
+    .source-stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--space-sm);
+      font-size: var(--text-sm);
+    }
+
+    .source-stat-label { color: var(--fg3); }
+    .source-stat-value { color: var(--fg); font-weight: 500; }
+
+    /* ── Actions ── */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-lg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg3);
+      color: var(--fg);
+      font-size: var(--text-md);
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .btn:hover {
+      border-color: var(--accent-border);
+      background: var(--accent-dim);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+      border-color: var(--accent-light);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+    }
+
+    /* ── Content area ── */
+    .content {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md) var(--space-xl);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .content-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+    }
+
+    .content-actions {
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    /* ── Preview pane ── */
+    .preview-area {
+      flex: 1;
+      overflow: auto;
+      padding: var(--space-xl);
+    }
+
+    .preview-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--fg3);
+      text-align: center;
+      gap: var(--space-md);
+    }
+
+    .preview-empty-icon {
+      font-size: 48px;
+      opacity: 0.3;
+    }
+
+    .preview-empty-text {
+      font-size: var(--text-lg);
+      color: var(--fg2);
+    }
+
+    .preview-empty-hint {
+      font-size: var(--text-sm);
+      color: var(--fg3);
+    }
+
+    .preview-output {
+      font-family: var(--font-mono);
+      font-size: var(--text-base);
+      line-height: 1.6;
+      color: var(--fg);
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-xl);
+      min-height: 200px;
+    }
+
+    .preview-stats {
+      display: flex;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-lg);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .preview-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .preview-stat-label {
+      font-size: var(--text-xs);
+      color: var(--fg3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .preview-stat-value {
+      font-size: var(--text-md);
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    /* ── History panel ── */
+    .history-panel {
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-xl);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg2);
+      z-index: 1;
+    }
+
+    .history-title {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--fg3);
+    }
+
+    .history-toggle {
+      font-size: var(--text-xs);
+      color: var(--accent);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+    }
+
+    .history-list {
+      padding: 0;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 70px 1fr 80px 80px 60px;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-xl);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: var(--text-sm);
+    }
+
+    .history-item:last-child { border-bottom: none; }
+
+    .history-format {
+      font-family: var(--font-mono);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .history-time {
+      color: var(--fg3);
+      font-size: var(--text-xs);
+    }
+
+    .history-size {
+      color: var(--fg2);
+      text-align: right;
+    }
+
+    .history-claims {
+      color: var(--fg3);
+      text-align: right;
+    }
+
+    .history-duration {
+      color: var(--fg3);
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+
+    .history-empty {
+      padding: var(--space-xl);
+      text-align: center;
+      color: var(--fg3);
+      font-size: var(--text-sm);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-xs) var(--space-xl);
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      font-size: var(--text-xs);
+      color: var(--fg3);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--space-lg);
+    }
+
+    .footer a {
+      color: var(--fg3);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .footer a:hover { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 40vh;
+        overflow: auto;
+      }
+
+      .history-item {
+        grid-template-columns: 60px 1fr 60px;
+      }
+
+      .history-claims,
+      .history-duration {
+        display: none;
+      }
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--bg4);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Toast ── */
+    .toast-container {
+      position: fixed;
+      bottom: var(--space-xl);
+      right: var(--space-xl);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .toast {
+      padding: var(--space-sm) var(--space-lg);
+      background: var(--bg3);
+      border: 1px solid var(--accent-border);
+      border-radius: var(--radius);
+      font-size: var(--text-sm);
+      color: var(--fg);
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">mill <span class="logo-sub">export workbench</span></span>
+      </div>
+      <div class="header-right">
+        <div class="status-badge">
+          <span class="dot" id="sse-dot"></span>
+          <span id="sse-status">connecting</span>
+        </div>
+        <div class="status-badge">
+          <span id="claim-count">--</span> claims
+        </div>
+      </div>
+    </header>
+
+    <!-- Main: sidebar + content -->
+    <div class="main">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Source info -->
+        <div class="sidebar-section">
+          <div class="section-title">Source</div>
+          <div class="source-info">
+            <div class="source-path" id="source-path">--</div>
+            <div class="source-stat">
+              <span class="source-stat-label">Files</span>
+              <span class="source-stat-value" id="source-files">--</span>
+            </div>
+            <div class="source-stat">
+              <span class="source-stat-label">Claims</span>
+              <span class="source-stat-value" id="source-claims">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Format picker -->
+        <div class="sidebar-section" style="flex: 1; overflow: auto;">
+          <div class="section-title">Export Format</div>
+          <div id="format-list"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="sidebar-section">
+          <div class="actions">
+            <button class="btn btn-primary" id="btn-preview" disabled>Preview</button>
+            <button class="btn" id="btn-export" disabled>Download</button>
+            <button class="btn" id="btn-refresh">Refresh source</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <div class="content">
+        <div class="content-header">
+          <div class="content-title" id="content-title">Select a format</div>
+          <div class="content-actions">
+            <button class="btn" id="btn-copy" disabled style="font-size: var(--text-sm); padding: var(--space-xs) var(--space-md);">Copy to clipboard</button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-area" id="preview-area">
+          <div class="preview-empty">
+            <div class="preview-empty-icon">&#x2699;</div>
+            <div class="preview-empty-text">Export workbench</div>
+            <div class="preview-empty-hint">Select a format from the sidebar and click Preview to see the output.</div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="history-panel" id="history-panel">
+          <div class="history-header">
+            <span class="history-title">Export History</span>
+            <button class="history-toggle" id="history-toggle">clear</button>
+          </div>
+          <div class="history-list" id="history-list">
+            <div class="history-empty">No exports yet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>mill v0.1.0 &mdash; @grainulation/mill</span>
+      <div class="footer-links">
+        <a href="https://github.com/grainulation/mill" target="_blank">github</a>
+        <a href="https://grainulation.github.io/mill/" target="_blank">docs</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    // ── State ──
+    let state = null;
+    let selectedFormat = null;
+    let currentPreview = null;
+    let history = [];
+    let sse = null;
+
+    // ── Elements ──
+    const $ = id => document.getElementById(id);
+
+    // ── SSE ──
+    function connectSSE() {
+      sse = new EventSource('/events');
+
+      sse.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'state' || msg.type === 'source-changed') {
+            state = msg.data;
+            renderState();
+          }
+          if (msg.type === 'export-complete') {
+            addHistoryItem(msg.data);
+          }
+        } catch { /* ignore parse errors */ }
+      };
+
+      sse.onopen = () => {
+        $('sse-dot').className = 'dot';
+        $('sse-status').textContent = 'connected';
+      };
+
+      sse.onerror = () => {
+        $('sse-dot').className = 'dot offline';
+        $('sse-status').textContent = 'disconnected';
+        // Reconnect handled by EventSource automatically
+      };
+    }
+
+    // ── Render ──
+    function renderState() {
+      if (!state) return;
+
+      $('source-path').textContent = state.source || '--';
+      $('source-files').textContent = Object.keys(state.sourceFiles || {}).length;
+      $('source-claims').textContent = state.claimCount || 0;
+      $('claim-count').textContent = state.claimCount || 0;
+
+      renderFormats(state.formats || []);
+      updateButtons();
+    }
+
+    function renderFormats(formats) {
+      const container = $('format-list');
+      container.innerHTML = '';
+
+      for (const fmt of formats) {
+        const card = document.createElement('div');
+        card.className = 'format-card' + (selectedFormat === fmt.name ? ' selected' : '');
+        card.dataset.format = fmt.name;
+
+        const estSize = estimateSize(fmt.name);
+
+        card.innerHTML = `
+          <div class="format-card-header">
+            <span class="format-name">${capitalize(fmt.name)}</span>
+            <span class="format-ext">${fmt.extension}</span>
+          </div>
+          <div class="format-desc">${fmt.description}</div>
+          <div class="format-meta">
+            <span>${fmt.mimeType.split(';')[0]}</span>
+            ${estSize ? '<span>&middot;</span><span>~' + estSize + '</span>' : ''}
+          </div>
+        `;
+
+        card.addEventListener('click', () => {
+          selectedFormat = fmt.name;
+          document.querySelectorAll('.format-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          $('content-title').textContent = capitalize(fmt.name) + ' preview';
+          updateButtons();
+        });
+
+        container.appendChild(card);
+      }
+    }
+
+    function estimateSize(format) {
+      if (!state || !state.claimCount) return null;
+      const n = state.claimCount;
+      const estimates = {
+        'markdown': formatBytes(n * 120),
+        'csv': formatBytes(n * 80),
+        'json-ld': formatBytes(n * 300),
+      };
+      return estimates[format] || null;
+    }
+
+    function updateButtons() {
+      const hasFormat = !!selectedFormat;
+      const hasData = state && state.hasCompilation;
+
+      $('btn-preview').disabled = !(hasFormat && hasData);
+      $('btn-export').disabled = !(hasFormat && hasData);
+    }
+
+    // ── Preview ──
+    async function loadPreview() {
+      if (!selectedFormat) return;
+
+      $('btn-preview').disabled = true;
+      $('btn-preview').innerHTML = '<div class="spinner"></div> Loading...';
+
+      try {
+        const resp = await fetch(`/api/preview?format=${selectedFormat}`);
+        const data = await resp.json();
+
+        if (data.error) {
+          showPreviewError(data.error);
+          return;
+        }
+
+        currentPreview = data;
+        renderPreview(data);
+      } catch (err) {
+        showPreviewError(err.message);
+      } finally {
+        $('btn-preview').disabled = false;
+        $('btn-preview').textContent = 'Preview';
+      }
+    }
+
+    function renderPreview(data) {
+      const area = $('preview-area');
+
+      const stats = `
+        <div class="preview-stats">
+          <div class="preview-stat">
+            <span class="preview-stat-label">Format</span>
+            <span class="preview-stat-value">${capitalize(data.format)}</span>
+          </div>
+          <div class="preview-stat">
+            <span class="preview-stat-label">Size</span>
+            <span class="preview-stat-value">${formatBytes(data.size)}</span>
+          </div>
+          <div class="preview-stat">
+            <span class="preview-stat-label">Lines</span>
+            <span class="preview-stat-value">${data.output.split('\n').length}</span>
+          </div>
+        </div>
+      `;
+
+      // Escape HTML for display
+      const escaped = data.output
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      area.innerHTML = stats + `<pre class="preview-output">${escaped}</pre>`;
+      $('btn-copy').disabled = false;
+    }
+
+    function showPreviewError(message) {
+      const area = $('preview-area');
+      area.innerHTML = `
+        <div class="preview-empty">
+          <div class="preview-empty-icon" style="color: var(--red);">!</div>
+          <div class="preview-empty-text">${message}</div>
+        </div>
+      `;
+    }
+
+    // ── Export / Download ──
+    async function downloadExport() {
+      if (!selectedFormat) return;
+
+      $('btn-export').disabled = true;
+      $('btn-export').innerHTML = '<div class="spinner"></div> Exporting...';
+
+      try {
+        const resp = await fetch('/api/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ format: selectedFormat }),
+        });
+        const data = await resp.json();
+
+        if (data.error) {
+          toast(data.error);
+          return;
+        }
+
+        // Trigger download
+        const fmt = state.formats.find(f => f.name === selectedFormat);
+        const blob = new Blob([data.output], { type: fmt?.mimeType || 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `export${fmt?.extension || '.txt'}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        toast(`Exported ${capitalize(selectedFormat)} (${formatBytes(data.job.outputSize)})`);
+
+        // Refresh history
+        fetchHistory();
+      } catch (err) {
+        toast('Export failed: ' + err.message);
+      } finally {
+        $('btn-export').disabled = false;
+        $('btn-export').textContent = 'Download';
+      }
+    }
+
+    // ── Clipboard ──
+    async function copyToClipboard() {
+      if (!currentPreview || !currentPreview.output) return;
+
+      try {
+        await navigator.clipboard.writeText(currentPreview.output);
+        toast('Copied to clipboard');
+      } catch {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = currentPreview.output;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('Copied to clipboard');
+      }
+    }
+
+    // ── History ──
+    async function fetchHistory() {
+      try {
+        const resp = await fetch('/api/history');
+        const data = await resp.json();
+        history = data.history || [];
+        renderHistory();
+      } catch { /* ignore */ }
+    }
+
+    function addHistoryItem(job) {
+      history.unshift(job);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = $('history-list');
+
+      if (history.length === 0) {
+        list.innerHTML = '<div class="history-empty">No exports yet</div>';
+        return;
+      }
+
+      list.innerHTML = history.slice(0, 20).map(job => `
+        <div class="history-item">
+          <span class="history-format">${job.format}</span>
+          <span class="history-time">${formatTime(job.timestamp)}</span>
+          <span class="history-size">${formatBytes(job.outputSize)}</span>
+          <span class="history-claims">${job.claimCount} claims</span>
+          <span class="history-duration">${job.duration}ms</span>
+        </div>
+      `).join('');
+    }
+
+    function clearHistory() {
+      history = [];
+      renderHistory();
+    }
+
+    // ── Refresh ──
+    async function refreshSource() {
+      $('btn-refresh').disabled = true;
+      $('btn-refresh').textContent = 'Refreshing...';
+
+      try {
+        const resp = await fetch('/api/refresh', { method: 'POST' });
+        const data = await resp.json();
+        state = data;
+        renderState();
+        toast('Source refreshed');
+      } catch (err) {
+        toast('Refresh failed: ' + err.message);
+      } finally {
+        $('btn-refresh').disabled = false;
+        $('btn-refresh').textContent = 'Refresh source';
+      }
+    }
+
+    // ── Utilities ──
+    function formatBytes(bytes) {
+      if (bytes == null) return '--';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function formatTime(iso) {
+      if (!iso) return '--';
+      try {
+        const d = new Date(iso);
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      } catch { return iso; }
+    }
+
+    function capitalize(str) {
+      if (!str) return '';
+      if (str === 'json-ld') return 'JSON-LD';
+      if (str === 'csv') return 'CSV';
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function toast(message) {
+      const container = $('toast-container');
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => el.remove(), 300);
+      }, 3000);
+    }
+
+    // ── Event listeners ──
+    $('btn-preview').addEventListener('click', loadPreview);
+    $('btn-export').addEventListener('click', downloadExport);
+    $('btn-copy').addEventListener('click', copyToClipboard);
+    $('btn-refresh').addEventListener('click', refreshSource);
+    $('history-toggle').addEventListener('click', clearHistory);
+
+    // ── Init ──
+    connectSSE();
+
+    // Also fetch initial state via REST in case SSE is slow
+    fetch('/api/state')
+      .then(r => r.json())
+      .then(data => { state = data; renderState(); })
+      .catch(() => {});
+
+    fetchHistory();
+  </script>
+</body>
+</html>
