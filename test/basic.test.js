@@ -132,9 +132,9 @@ test('json-ld export produces valid JSON-LD', () => {
 
   const doc = JSON.parse(fs.readFileSync(output, 'utf-8'));
   assert.ok(doc['@context']);
-  assert.strictEqual(doc['@type'], 'ItemList');
-  assert.strictEqual(doc.numberOfItems, 2);
-  assert.strictEqual(doc.itemListElement[0].item.identifier, 'r001');
+  assert.strictEqual(doc['@type'], 'Report');
+  assert.strictEqual(doc.hasPart.numberOfItems, 2);
+  assert.strictEqual(doc.hasPart.itemListElement[0].item.identifier, 'r001');
 });
 
 test('markdown export converts HTML to markdown', () => {
@@ -324,7 +324,7 @@ test('JSON-LD items have required fields', () => {
   const output = path.join(tmpDir, 'fields-check.jsonld');
   run(['export', '--format', 'json-ld', input, '-o', output]);
   const doc = JSON.parse(fs.readFileSync(output, 'utf-8'));
-  const item = doc.itemListElement[0].item;
+  const item = doc.hasPart.itemListElement[0].item;
   assert.ok(item['@type'] === 'claim');
   assert.ok(item['@id'].startsWith('wheat:claim/'));
   assert.ok(item.identifier);
@@ -341,7 +341,7 @@ test('JSON-LD includes keywords from tags', () => {
   const output = path.join(tmpDir, 'tags-check.jsonld');
   run(['export', '--format', 'json-ld', input, '-o', output]);
   const doc = JSON.parse(fs.readFileSync(output, 'utf-8'));
-  const firstItem = doc.itemListElement[0].item;
+  const firstItem = doc.hasPart.itemListElement[0].item;
   assert.ok(firstItem.keywords);
   assert.ok(firstItem.keywords.includes('node'));
 });
