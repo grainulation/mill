@@ -436,7 +436,7 @@ test('static publisher uses dark theme with amber accent', () => {
   const index = fs.readFileSync(path.join(siteDir, 'index.html'), 'utf-8');
   assert.ok(index.includes('#d97706'), 'uses amber accent color');
   assert.ok(index.includes('background: #111'), 'uses dark background');
-  assert.ok(index.includes('Built with @grainulator/mill'), 'has mill footer');
+  assert.ok(index.includes('Built with @grainulation/mill'), 'has mill footer');
 });
 
 cleanup();

@@ -6,22 +6,22 @@ Turn sprint evidence into shareable artifacts.
 
 ```bash
 # Export a brief to PDF
-npx @grainulator/mill export --format pdf output/brief.html
+npx @grainulation/mill export --format pdf output/brief.html
 
 # Claims to CSV
-npx @grainulator/mill export --format csv claims.json
+npx @grainulation/mill export --format csv claims.json
 
 # HTML to clean Markdown
-npx @grainulator/mill convert --from html --to markdown output/brief.html
+npx @grainulation/mill convert --from html --to markdown output/brief.html
 
 # Build a static site from sprint outputs
-npx @grainulator/mill publish --target static output/
+npx @grainulation/mill publish --target static output/
 
 # Claims to JSON-LD
-npx @grainulator/mill export --format json-ld claims.json -o claims.jsonld
+npx @grainulation/mill export --format json-ld claims.json -o claims.jsonld
 
 # Copy to clipboard
-npx @grainulator/mill publish --target clipboard output/brief.html
+npx @grainulation/mill publish --target clipboard output/brief.html
 ```
 
 ## Export formats

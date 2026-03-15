@@ -32,11 +32,11 @@ Publish targets:
   clipboard  Copy formatted output to system clipboard
 
 Examples:
-  npx @grainulator/mill export --format pdf output/brief.html
-  npx @grainulator/mill export --format csv claims.json
-  npx @grainulator/mill export --format json-ld claims.json -o claims.jsonld
-  npx @grainulator/mill publish --target static output/
-  npx @grainulator/mill convert --from html --to markdown output/brief.html
+  npx @grainulation/mill export --format pdf output/brief.html
+  npx @grainulation/mill export --format csv claims.json
+  npx @grainulation/mill export --format json-ld claims.json -o claims.jsonld
+  npx @grainulation/mill publish --target static output/
+  npx @grainulation/mill convert --from html --to markdown output/brief.html
 `.trim();
 
 function main() {

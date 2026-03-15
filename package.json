@@ -1,5 +1,5 @@
 {
-  "name": "@grainulator/mill",
+  "name": "@grainulation/mill",
   "version": "0.1.0",
   "description": "Turn wheat sprint artifacts into shareable formats",
   "main": "lib/formats.js",
@@ -20,10 +20,10 @@
     "json-ld",
     "publishing"
   ],
-  "author": "grainulator contributors",
+  "author": "grainulation contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/grainulator/mill.git"
+    "url": "https://github.com/grainulation/mill.git"
   }
 }
