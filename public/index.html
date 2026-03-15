@@ -5,7 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>mill — export workbench</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230a0e1a'/><path d='M32,3.84 L18.18,3.84 C8.04,13.98 8.04,45.52 18.18,60.16 L32,60.16' fill='none' stroke='%23a78bfa' stroke-width='1.28' stroke-linecap='round' stroke-linejoin='round'/><text x='32' y='33' text-anchor='middle' dominant-baseline='central' fill='%23a78bfa' font-family='-apple-system,system-ui,sans-serif' font-size='24' font-weight='700'>M</text></svg>">
-  <link rel="stylesheet" href="grainulation-tokens.css">
+  <style>
+/* ── grainulation tokens (inline, zero deps) ── */
+:root {
+  --bg: #0a0e1a; --bg2: #111827; --bg3: #1e293b; --bg4: #334155;
+  --fg: #e2e8f0; --fg2: #94a3b8; --fg3: #64748b;
+  --text: var(--fg); --muted: var(--fg2); --dim: var(--fg3);
+  --border: #1e293b; --border-subtle: rgba(255,255,255,0.08);
+  --green: #34d399; --red: #f87171; --blue: #60a5fa; --purple: #a78bfa; --orange: #fb923c; --cyan: #22d3ee;
+  --space-xs: 4px; --space-sm: 8px; --space-md: 12px; --space-lg: 16px; --space-xl: 24px; --space-2xl: 32px;
+  --radius: 8px; --radius-sm: 4px; --radius-lg: 12px;
+  --font-sans: -apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
+  --font-mono: 'SF Mono','Cascadia Code','JetBrains Mono','Fira Code',monospace;
+  --text-xs: 9px; --text-sm: 10px; --text-base: 12px; --text-md: 13px; --text-lg: 15px; --text-xl: 18px;
+  --line-height: 1.5;
+  --transition-fast: 0.1s ease; --transition-base: 0.15s ease;
+  /* mill accent: purple */
+  --accent: #a78bfa; --accent-light: #c4b5fd; --accent-dim: rgba(167,139,250,0.10); --accent-border: rgba(167,139,250,0.25);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-sans); background: var(--bg); color: var(--fg);
+  font-size: var(--text-md); line-height: var(--line-height);
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+  </style>
   <style>
     /* ── Layout ── */
     .app {
@@ -451,19 +479,56 @@
 
     .footer a:hover { color: var(--accent); }
 
+    /* ── Mobile nav ── */
+    .mobile-nav {
+      display: none;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-nav-bar {
+      display: flex;
+    }
+    .mobile-tab {
+      flex: 1;
+      padding: 8px 0;
+      text-align: center;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--fg3);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+    .mobile-tab:hover { color: var(--fg2); }
+    .mobile-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
+      .app {
+        grid-template-rows: auto auto 1fr auto;
+      }
+
+      .mobile-nav { display: block; }
+
       .main {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: 1fr;
       }
 
       .sidebar {
         border-right: none;
         border-bottom: 1px solid var(--border);
-        max-height: 40vh;
-        overflow: auto;
+        display: none;
       }
+
+      .sidebar.mobile-visible {
+        display: flex;
+        max-height: none;
+      }
+
+      .content.mobile-hidden { display: none; }
 
       .history-item {
         grid-template-columns: 60px 1fr 60px;
@@ -473,6 +538,8 @@
       .history-duration {
         display: none;
       }
+
+      .footer { font-size: 8px; padding: var(--space-xs) var(--space-md); }
     }
 
     /* ── Spinner ── */
@@ -533,6 +600,14 @@
         </div>
       </div>
     </header>
+
+    <!-- Mobile nav -->
+    <div class="mobile-nav">
+      <div class="mobile-nav-bar">
+        <button class="mobile-tab active" data-panel="preview" onclick="switchMobilePanel('preview')">Preview</button>
+        <button class="mobile-tab" data-panel="formats" onclick="switchMobilePanel('formats')">Formats</button>
+      </div>
+    </div>
 
     <!-- Main: sidebar + content -->
     <div class="main">
@@ -944,6 +1019,23 @@
         el.style.transition = 'opacity 0.3s ease';
         setTimeout(() => el.remove(), 300);
       }, 3000);
+    }
+
+    // ── Mobile panel switching ──
+    function switchMobilePanel(panel) {
+      const sidebar = document.querySelector('.sidebar');
+      const content = document.querySelector('.content');
+      const tabs = document.querySelectorAll('.mobile-tab');
+
+      sidebar.classList.remove('mobile-visible');
+      content.classList.remove('mobile-hidden');
+
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === panel));
+
+      if (panel === 'formats') {
+        sidebar.classList.add('mobile-visible');
+        content.classList.add('mobile-hidden');
+      }
     }
 
     // ── Event listeners ──
