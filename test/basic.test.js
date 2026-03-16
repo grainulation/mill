@@ -181,7 +181,7 @@ test('unknown command exits with error', () => {
     run(['nonexistent']);
     assert.fail('Should have thrown');
   } catch (err) {
-    assert.ok(err.stderr.includes('Unknown command'));
+    assert.ok(err.stderr.includes('unknown command'));
   }
 });
 
@@ -190,7 +190,7 @@ test('export without --format exits with error', () => {
     run(['export', 'somefile.html']);
     assert.fail('Should have thrown');
   } catch (err) {
-    assert.ok(err.stderr.includes('Missing --format'));
+    assert.ok(err.stderr.includes('missing --format'));
   }
 });
 
