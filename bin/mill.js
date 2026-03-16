@@ -8,6 +8,13 @@ const { fork } = require('node:child_process');
 
 const LIB_DIR = path.join(__dirname, '..', 'lib');
 
+const verbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+function vlog(...a) {
+  if (!verbose) return;
+  const ts = new Date().toISOString();
+  process.stderr.write(`[${ts}] mill: ${a.join(' ')}\n`);
+}
+
 const COMMANDS = {
   export: { description: 'Export artifacts to a target format', handler: runExport },
   publish: { description: 'Publish sprint outputs to a destination', handler: runPublish },
@@ -48,6 +55,8 @@ Examples:
 function main() {
   const args = process.argv.slice(2);
 
+  vlog('startup', `command=${args[0] || '(none)'}`, `cwd=${process.cwd()}`);
+
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
     console.log(USAGE);
     process.exit(0);
@@ -68,7 +77,7 @@ function main() {
   }
 
   if (!handler) {
-    console.error(`Unknown command: ${command}`);
+    console.error(`mill: unknown command: ${command}`);
     console.error(`Run "mill --help" for usage.`);
     process.exit(1);
   }
@@ -90,20 +99,20 @@ async function runExport(args) {
   } catch (err) {
     if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
       const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
-      console.error(`Unknown option: ${flag}. Run "mill export --help" for usage.`);
+      console.error(`mill: unknown option: ${flag}. Run "mill export --help" for usage.`);
       process.exit(1);
     }
     throw err;
   }
 
   if (!values.format) {
-    console.error('Missing --format. Options: pdf, csv, markdown, json-ld');
+    console.error('mill: missing --format. Options: pdf, csv, markdown, json-ld');
     process.exit(1);
   }
 
   const inputFile = positionals[0];
   if (!inputFile) {
-    console.error('Missing input file.');
+    console.error('mill: missing input file.');
     process.exit(1);
   }
 
@@ -117,7 +126,7 @@ async function runExport(args) {
   const exporter = formats.getExporter(format);
 
   if (!exporter) {
-    console.error(`Unknown format: ${format}`);
+    console.error(`mill: unknown format: ${format}`);
     console.error(`Available: ${formats.listExportFormats().join(', ')}`);
     process.exit(1);
   }
@@ -126,7 +135,7 @@ async function runExport(args) {
     const result = await exporter.export(inputPath, outputPath);
     console.log(result.message);
   } catch (err) {
-    console.error(`Export failed: ${err.message}`);
+    console.error(`mill: export failed: ${err.message}`);
     process.exit(1);
   }
 }
@@ -145,20 +154,20 @@ async function runPublish(args) {
   } catch (err) {
     if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
       const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
-      console.error(`Unknown option: ${flag}. Run "mill publish --help" for usage.`);
+      console.error(`mill: unknown option: ${flag}. Run "mill publish --help" for usage.`);
       process.exit(1);
     }
     throw err;
   }
 
   if (!values.target) {
-    console.error('Missing --target. Options: static, clipboard');
+    console.error('mill: missing --target. Options: static, clipboard');
     process.exit(1);
   }
 
   const inputDir = positionals[0];
   if (!inputDir) {
-    console.error('Missing input directory.');
+    console.error('mill: missing input directory.');
     process.exit(1);
   }
 
@@ -170,7 +179,7 @@ async function runPublish(args) {
   const publisher = formats.getPublisher(target);
 
   if (!publisher) {
-    console.error(`Unknown target: ${target}`);
+    console.error(`mill: unknown target: ${target}`);
     console.error(`Available: ${formats.listPublishTargets().join(', ')}`);
     process.exit(1);
   }
@@ -179,7 +188,7 @@ async function runPublish(args) {
     const result = await publisher.publish(inputPath, outputPath);
     console.log(result.message);
   } catch (err) {
-    console.error(`Publish failed: ${err.message}`);
+    console.error(`mill: publish failed: ${err.message}`);
     process.exit(1);
   }
 }
@@ -199,20 +208,20 @@ async function runConvert(args) {
   } catch (err) {
     if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
       const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
-      console.error(`Unknown option: ${flag}. Run "mill convert --help" for usage.`);
+      console.error(`mill: unknown option: ${flag}. Run "mill convert --help" for usage.`);
       process.exit(1);
     }
     throw err;
   }
 
   if (!values.from || !values.to) {
-    console.error('Missing --from and/or --to format.');
+    console.error('mill: missing --from and/or --to format.');
     process.exit(1);
   }
 
   const inputFile = positionals[0];
   if (!inputFile) {
-    console.error('Missing input file.');
+    console.error('mill: missing input file.');
     process.exit(1);
   }
 
@@ -224,7 +233,7 @@ async function runConvert(args) {
   const exporter = formats.getExporter(values.to);
 
   if (!exporter) {
-    console.error(`Unknown target format: ${values.to}`);
+    console.error(`mill: unknown target format: ${values.to}`);
     process.exit(1);
   }
 
@@ -232,7 +241,7 @@ async function runConvert(args) {
     const result = await exporter.export(inputPath, outputPath);
     console.log(result.message);
   } catch (err) {
-    console.error(`Convert failed: ${err.message}`);
+    console.error(`mill: convert failed: ${err.message}`);
     process.exit(1);
   }
 }
