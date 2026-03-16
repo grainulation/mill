@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-tool="mill">
+<html lang="en" dir="auto" data-tool="mill">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -99,7 +99,7 @@ body {
     .status-badge .dot.offline { background: var(--red); }
     .reconnect-banner { position:fixed;top:0;left:0;right:0;z-index:9999;padding:8px 16px;background:#92400e;color:#fbbf24;font-size:12px;text-align:center;transform:translateY(-100%);transition:transform .3s;font-family:system-ui,sans-serif }
     .reconnect-banner.visible { transform:translateY(0) }
-    .reconnect-banner button { background:none;border:1px solid #fbbf24;color:#fbbf24;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:11px;margin-left:8px }
+    .reconnect-banner button { background:none;border:1px solid #fbbf24;color:#fbbf24;padding:2px 10px;border-radius:4px;cursor:pointer;font-size:11px;margin-inline-start:8px }
 
     /* ── Main content ── */
     .main {
@@ -111,7 +111,7 @@ body {
     /* ── Sidebar ── */
     .sidebar {
       background: var(--bg2);
-      border-right: 1px solid var(--border);
+      border-inline-end: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -435,17 +435,17 @@ body {
 
     .history-size {
       color: var(--fg2);
-      text-align: right;
+      text-align: end;
     }
 
     .history-claims {
       color: var(--fg3);
-      text-align: right;
+      text-align: end;
     }
 
     .history-duration {
       color: var(--fg3);
-      text-align: right;
+      text-align: end;
       font-family: var(--font-mono);
       font-size: var(--text-xs);
     }
@@ -586,7 +586,7 @@ body {
     }
 
     /* ── A11y ── */
-    .skip-link{position:absolute;top:-40px;left:0;background:var(--accent);color:#000;padding:8px 16px;z-index:10000;font-size:14px;font-weight:600;transition:top .2s}
+    .skip-link{position:absolute;top:-40px;inset-inline-start:0;background:var(--accent);color:#000;padding:8px 16px;z-index:10000;font-size:14px;font-weight:600;transition:top .2s}
     .skip-link:focus{top:0}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
     @media (prefers-reduced-motion: reduce) {
@@ -671,7 +671,7 @@ body {
         <!-- Preview -->
         <div class="preview-area" id="preview-area">
           <div class="preview-empty">
-            <div class="preview-empty-icon">&#x2699;</div>
+            <div class="preview-empty-icon">M</div>
             <div class="preview-empty-text">Export workbench</div>
             <div class="preview-empty-hint">Select a format from the sidebar and click Preview to see the output.</div>
           </div>
@@ -704,6 +704,10 @@ body {
   <div class="toast-container" id="toast-container"></div>
 
   <script>
+    // ── i18n passthrough ──
+    const t = (s, v) => v ? s.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? k) : s;
+    const _dtf = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
     // ── State ──
     let state = null;
     let selectedFormat = null;
@@ -719,11 +723,11 @@ body {
     function showBanner(count) {
       const b = $('reconnectBanner');
       if (count > 5) {
-        b.innerHTML = 'Connection lost. <button onclick="retryCount=0;connectSSE()">Retry now</button>';
+        b.innerHTML = t('Connection lost.') + ' <button onclick="retryCount=0;connectSSE()">' + t('Retry now') + '</button>';
       } else if (count > 1) {
-        b.textContent = 'Reconnecting (attempt ' + count + ')...';
+        b.textContent = t('Reconnecting (attempt {count})...', { count });
       } else {
-        b.textContent = 'Reconnecting...';
+        b.textContent = t('Reconnecting...');
       }
       b.classList.add('visible');
     }
@@ -751,13 +755,13 @@ body {
         retryCount = 0;
         hideBanner();
         $('sse-dot').className = 'dot';
-        $('sse-status').textContent = 'connected';
+        $('sse-status').textContent = t('connected');
       };
 
       sse.onerror = () => {
         sse.close();
         $('sse-dot').className = 'dot offline';
-        $('sse-status').textContent = 'disconnected';
+        $('sse-status').textContent = t('disconnected');
         const delay = Math.min(30000, 1000 * Math.pow(2, retryCount)) + Math.random() * 1000;
         retryCount++;
         showBanner(retryCount);
@@ -854,7 +858,7 @@ body {
         showPreviewError(err.message);
       } finally {
         $('btn-preview').disabled = false;
-        $('btn-preview').textContent = 'Preview';
+        $('btn-preview').textContent = t('Preview');
       }
     }
 
@@ -864,15 +868,15 @@ body {
       const stats = `
         <div class="preview-stats">
           <div class="preview-stat">
-            <span class="preview-stat-label">Format</span>
+            <span class="preview-stat-label">${t('Format')}</span>
             <span class="preview-stat-value">${capitalize(data.format)}</span>
           </div>
           <div class="preview-stat">
-            <span class="preview-stat-label">Size</span>
+            <span class="preview-stat-label">${t('Size')}</span>
             <span class="preview-stat-value">${formatBytes(data.size)}</span>
           </div>
           <div class="preview-stat">
-            <span class="preview-stat-label">Lines</span>
+            <span class="preview-stat-label">${t('Lines')}</span>
             <span class="preview-stat-value">${data.output.split('\n').length}</span>
           </div>
         </div>
@@ -938,7 +942,7 @@ body {
         toast('Export failed: ' + err.message);
       } finally {
         $('btn-export').disabled = false;
-        $('btn-export').textContent = 'Download';
+        $('btn-export').textContent = t('Download');
       }
     }
 
@@ -948,7 +952,7 @@ body {
 
       try {
         await navigator.clipboard.writeText(currentPreview.output);
-        toast('Copied to clipboard');
+        toast(t('Copied to clipboard'));
       } catch {
         // Fallback
         const ta = document.createElement('textarea');
@@ -959,7 +963,7 @@ body {
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        toast('Copied to clipboard');
+        toast(t('Copied to clipboard'));
       }
     }
 
@@ -982,7 +986,7 @@ body {
       const list = $('history-list');
 
       if (history.length === 0) {
-        list.innerHTML = '<div class="history-empty">No exports yet</div>';
+        list.innerHTML = '<div class="history-empty">' + t('No exports yet') + '</div>';
         return;
       }
 
@@ -1005,19 +1009,19 @@ body {
     // ── Refresh ──
     async function refreshSource() {
       $('btn-refresh').disabled = true;
-      $('btn-refresh').textContent = 'Refreshing...';
+      $('btn-refresh').textContent = t('Refreshing...');
 
       try {
         const resp = await fetch('/api/refresh', { method: 'POST' });
         const data = await resp.json();
         state = data;
         renderState();
-        toast('Source refreshed');
+        toast(t('Source refreshed'));
       } catch (err) {
         toast('Refresh failed: ' + err.message);
       } finally {
         $('btn-refresh').disabled = false;
-        $('btn-refresh').textContent = 'Refresh source';
+        $('btn-refresh').textContent = t('Refresh source');
       }
     }
 
@@ -1033,7 +1037,7 @@ body {
       if (!iso) return '--';
       try {
         const d = new Date(iso);
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return _dtf.format(d);
       } catch { return iso; }
     }
 
@@ -1068,7 +1072,7 @@ body {
       sidebar.classList.remove('mobile-visible');
       content.classList.remove('mobile-hidden');
 
-      tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === panel));
+      tabs.forEach(tb => tb.classList.toggle('active', tb.dataset.panel === panel));
 
       if (panel === 'formats') {
         sidebar.classList.add('mobile-visible');
@@ -1094,7 +1098,7 @@ body {
     document.addEventListener('keydown', (e) => {
       if (e.key === '[' && !e.target.matches('input,textarea')) { e.preventDefault(); switchMillPanel(-1); }
       if (e.key === ']' && !e.target.matches('input,textarea')) { e.preventDefault(); switchMillPanel(1); }
-      if (e.key === 'Escape') { selectedFormat = null; currentPreview = null; $('preview-area').innerHTML = '<div class="preview-empty"><div class="preview-empty-icon">&#x2699;</div><div class="preview-empty-text">Export workbench</div></div>'; }
+      if (e.key === 'Escape') { selectedFormat = null; currentPreview = null; $('preview-area').innerHTML = '<div class="preview-empty"><div class="preview-empty-icon">M</div><div class="preview-empty-text">Export workbench</div></div>'; }
     });
 
     // ── Init ──
