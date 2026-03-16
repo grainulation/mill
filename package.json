@@ -8,7 +8,9 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./server": "./lib/server.js",
+    "./server": {
+      "import": "./lib/server.js"
+    },
     "./formats/markdown": "./lib/formats/markdown.js",
     "./formats/csv": "./lib/formats/csv.js",
     "./formats/json-ld": "./lib/formats/json-ld.js",
@@ -17,7 +19,8 @@
   "files": [
     "bin/",
     "lib/",
-    "public/"
+    "public/",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "test": "node test/basic.test.js",
@@ -38,10 +41,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/grainulation/mill.git"
+    "url": "git+https://github.com/grainulation/mill.git"
   },
   "engines": {
     "node": ">=18"
   },
-  "homepage": "https://grainulation.github.io/mill/"
+  "bugs": {
+    "url": "https://github.com/grainulation/mill/issues"
+  },
+  "homepage": "https://mill.grainulation.com"
 }

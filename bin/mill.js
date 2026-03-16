@@ -8,7 +8,14 @@ const { fork } = require('node:child_process');
 
 const LIB_DIR = path.join(__dirname, '..', 'lib');
 
-const verbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+// --version / -v: print version and exit
+if (process.argv.includes('--version') || process.argv.includes('-v')) {
+  const pkg = require(path.join(__dirname, '..', 'package.json'));
+  console.log(pkg.version);
+  process.exit(0);
+}
+
+const verbose = process.argv.includes('--verbose');
 function vlog(...a) {
   if (!verbose) return;
   const ts = new Date().toISOString();
@@ -21,6 +28,7 @@ const COMMANDS = {
   convert: { description: 'Convert between artifact formats', handler: runConvert },
   formats: { description: 'List available export formats', handler: runFormats },
   serve: { description: 'Start the export workbench UI', handler: runServe },
+  'serve-mcp': { description: 'Start the MCP server on stdio', handler: null },
 };
 
 const USAGE = `
@@ -28,6 +36,7 @@ mill -- turn sprint evidence into shareable artifacts
 
 Usage:
   mill serve   [--port 9094] [--source <dir>]  Start the export workbench UI
+  mill serve-mcp                               Start the MCP server on stdio
   mill export  --format <fmt> <file>           Export artifact to target format
   mill publish --target <dest> <dir>           Publish sprint outputs
   mill convert --from <fmt> --to <fmt> <file>  Convert between formats
@@ -76,6 +85,13 @@ function main() {
     return;
   }
 
+  // serve-mcp command starts the MCP server on stdio
+  if (command === 'serve-mcp') {
+    const serveMcp = require('../lib/serve-mcp.js');
+    serveMcp.run(process.cwd());
+    return;
+  }
+
   if (!handler) {
     console.error(`mill: unknown command: ${command}`);
     console.error(`Run "mill --help" for usage.`);
@@ -93,6 +109,7 @@ async function runExport(args) {
       options: {
         format: { type: 'string', short: 'f' },
         output: { type: 'string', short: 'o' },
+        json: { type: 'boolean', default: false },
       },
       allowPositionals: true,
     }));
@@ -133,9 +150,17 @@ async function runExport(args) {
 
   try {
     const result = await exporter.export(inputPath, outputPath);
-    console.log(result.message);
+    if (values.json) {
+      console.log(JSON.stringify(result));
+    } else {
+      console.log(result.message);
+    }
   } catch (err) {
-    console.error(`mill: export failed: ${err.message}`);
+    if (values.json) {
+      console.log(JSON.stringify({ error: err.message }));
+    } else {
+      console.error(`mill: export failed: ${err.message}`);
+    }
     process.exit(1);
   }
 }
@@ -148,6 +173,7 @@ async function runPublish(args) {
       options: {
         target: { type: 'string', short: 't' },
         output: { type: 'string', short: 'o' },
+        json: { type: 'boolean', default: false },
       },
       allowPositionals: true,
     }));
@@ -186,9 +212,17 @@ async function runPublish(args) {
 
   try {
     const result = await publisher.publish(inputPath, outputPath);
-    console.log(result.message);
+    if (values.json) {
+      console.log(JSON.stringify(result));
+    } else {
+      console.log(result.message);
+    }
   } catch (err) {
-    console.error(`mill: publish failed: ${err.message}`);
+    if (values.json) {
+      console.log(JSON.stringify({ error: err.message }));
+    } else {
+      console.error(`mill: publish failed: ${err.message}`);
+    }
     process.exit(1);
   }
 }
@@ -202,6 +236,7 @@ async function runConvert(args) {
         from: { type: 'string' },
         to: { type: 'string' },
         output: { type: 'string', short: 'o' },
+        json: { type: 'boolean', default: false },
       },
       allowPositionals: true,
     }));
@@ -239,15 +274,31 @@ async function runConvert(args) {
 
   try {
     const result = await exporter.export(inputPath, outputPath);
-    console.log(result.message);
+    if (values.json) {
+      console.log(JSON.stringify(result));
+    } else {
+      console.log(result.message);
+    }
   } catch (err) {
-    console.error(`mill: convert failed: ${err.message}`);
+    if (values.json) {
+      console.log(JSON.stringify({ error: err.message }));
+    } else {
+      console.error(`mill: convert failed: ${err.message}`);
+    }
     process.exit(1);
   }
 }
 
-function runFormats() {
+function runFormats(args) {
+  const jsonMode = (args || []).includes('--json');
   const formats = require('../lib/formats.js');
+  if (jsonMode) {
+    console.log(JSON.stringify({
+      export_formats: formats.listExportFormats(),
+      publish_targets: formats.listPublishTargets(),
+    }));
+    return;
+  }
   console.log('Export formats:');
   for (const f of formats.listExportFormats()) {
     console.log(`  ${f}`);
