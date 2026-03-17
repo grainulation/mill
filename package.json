@@ -1,7 +1,6 @@
 {
   "name": "@grainulation/mill",
   "version": "1.0.0",
-  "type": "module",
   "description": "Turn wheat sprint artifacts into shareable formats",
   "main": "lib/index.js",
   "bin": {
@@ -24,7 +23,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node test/basic.test.cjs",
+    "test": "node test/basic.test.js",
     "start": "node bin/mill.js",
     "serve": "node bin/mill.js serve"
   },
