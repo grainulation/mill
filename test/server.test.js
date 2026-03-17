@@ -1,12 +1,15 @@
-'use strict';
+import { describe, it, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 
-const { describe, it, before, after } = require('node:test');
-const assert = require('node:assert/strict');
-const http = require('node:http');
-const fs = require('node:fs');
-const path = require('node:path');
-const os = require('node:os');
-const { spawn } = require('node:child_process');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const SERVER_SCRIPT = path.join(__dirname, '..', 'lib', 'server.js');
 

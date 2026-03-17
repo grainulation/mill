@@ -1,8 +1,11 @@
-'use strict';
+import assert from 'node:assert';
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 
-const assert = require('node:assert');
-const path = require('node:path');
-const fs = require('node:fs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const FORMATS_DIR = path.join(__dirname, '..', 'lib', 'formats');
 
