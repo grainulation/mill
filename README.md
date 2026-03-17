@@ -1,8 +1,12 @@
-# @grainulation/mill
+<p align="center">
+  <img src="site/wordmark.svg" alt="Mill" width="400">
+</p>
 
-[![npm version](https://img.shields.io/npm/v/@grainulation/mill)](https://www.npmjs.com/package/@grainulation/mill) [![npm downloads](https://img.shields.io/npm/dm/@grainulation/mill)](https://www.npmjs.com/package/@grainulation/mill) [![license](https://img.shields.io/npm/l/@grainulation/mill)](https://github.com/grainulation/mill/blob/main/LICENSE) [![node](https://img.shields.io/node/v/@grainulation/mill)](https://nodejs.org) [![CI](https://github.com/grainulation/mill/actions/workflows/ci.yml/badge.svg)](https://github.com/grainulation/mill/actions)
+<p align="center">
+  <a href="https://www.npmjs.com/package/@grainulation/mill"><img src="https://img.shields.io/npm/v/@grainulation/mill" alt="npm version"></a> <a href="https://www.npmjs.com/package/@grainulation/mill"><img src="https://img.shields.io/npm/dm/@grainulation/mill" alt="npm downloads"></a> <a href="https://github.com/grainulation/mill/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@grainulation/mill" alt="license"></a> <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/@grainulation/mill" alt="node"></a> <a href="https://github.com/grainulation/mill/actions"><img src="https://github.com/grainulation/mill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
 
-**Turn sprint evidence into shareable artifacts.**
+<p align="center"><strong>Turn sprint evidence into shareable artifacts.</strong></p>
 
 24 export formats. PDF, CSV, Markdown, slides, JSON-LD, Jira, GitHub Issues, and more. Give mill your claims or HTML output and it produces whatever your team needs.
 
