@@ -1,124 +1,85 @@
 # Mill Export Formats
 
-Mill converts `compilation.json` into distributable output formats. Every format reads from the same compiled data, so the content is consistent across exports.
+Mill converts sprint artifacts into distributable output formats. Every format is a module in `lib/formats/`.
 
 ## Usage
 
 ```bash
-npx @grainulation/mill export --format <format> [options]
+mill export --format <format> <file> [-o <output>]
+mill convert --from <format> --to <format> <file> [-o <output>]
+mill publish --target <target> <dir> [-o <output>]
 ```
 
-Mill reads `compilation.json` from the current directory by default. Use `--input <path>` to specify a different file.
+## CLI Flags
 
-## PDF
-
-Structured decision document with cover page, table of contents, and evidence appendix.
-
-```bash
-mill export --format pdf
-mill export --format pdf --output report.pdf
-mill export --format pdf --template minimal
-```
-
-Output: single `.pdf` file. Requires no external dependencies (uses built-in PDF generation).
-
-## CSV
-
-Flat table of claims. One row per claim with columns for ID, type, evidence tier, status, and text.
-
-```bash
-mill export --format csv
-mill export --format csv --columns id,type,tier,text
-```
-
-Output: single `.csv` file. Useful for importing into spreadsheets or feeding into other tools.
-
-## Markdown
-
-Structured Markdown document. Same content as the PDF but in plain text.
-
-```bash
-mill export --format markdown
-mill export --format md --sections summary,risks,recommendations
-```
-
-Output: single `.md` file. The `--sections` flag controls which sections to include.
-
-## JSON-LD
-
-Linked data representation of the sprint. Useful for machine consumption and semantic tooling.
-
-```bash
-mill export --format jsonld
-mill export --format jsonld --context https://grainulation.com/schema/v1
-```
-
-Output: single `.jsonld` file with `@context`, `@type`, and claim nodes.
-
-## HTML Static Site
-
-Self-contained HTML file with inline CSS and JS. Interactive claim explorer with filtering and search.
-
-```bash
-mill export --format html
-mill export --format html --theme dark
-```
-
-Output: single `.html` file. No external dependencies. Works offline.
-
-## Clipboard
-
-Copies a formatted summary to the system clipboard. Intended for pasting into Slack, email, or documents.
-
-```bash
-mill export --format clipboard
-mill export --format clipboard --style bullets
-```
-
-Output: nothing written to disk. Content is placed on the system clipboard.
-
-## Issue Tracker
-
-Generates issues from recommendation and risk claims. Supports Jira, Linear, and GitHub Issues.
-
-```bash
-mill export --format jira --project PROJ
-mill export --format github --repo org/repo
-```
-
-Output: JSON file with issue payloads ready for the target API. Supported targets: Jira, Linear, GitHub Issues. Use `--push` to create issues directly (requires API tokens).
-
-## Diagram (Mermaid)
-
-Generates a Mermaid diagram showing claim relationships, conflicts, and dependency chains.
-
-```bash
-mill export --format mermaid
-mill export --format mermaid --type flowchart
-mill export --format mermaid --type timeline
-```
-
-Output: single `.mmd` file. Render with any Mermaid-compatible viewer or embed in Markdown.
-
-## Slide Deck
-
-Scroll-snap HTML presentation. One slide per key finding with evidence attribution.
-
-```bash
-mill export --format slides
-mill export --format slides --max-slides 12
-```
-
-Output: single `.html` file with scroll-snap CSS. Dark theme, no external dependencies.
-
-## Global Options
-
-These flags work with any format:
+### `mill export`
 
 | Flag | Description |
 |---|---|
-| `--input <path>` | Path to `compilation.json` (default: `./compilation.json`) |
-| `--output <path>` | Output file path (default: auto-generated from format) |
-| `--filter <expr>` | Filter claims by type, tier, or status before export |
-| `--include-retracted` | Include retracted claims (excluded by default) |
-| `--quiet` | Suppress progress output |
+| `--format <fmt>`, `-f` | Target export format (required) |
+| `-o <path>` | Output file path |
+| `--json` | Machine-readable JSON output |
+
+### `mill convert`
+
+| Flag | Description |
+|---|---|
+| `--from <fmt>` | Source format (required) |
+| `--to <fmt>` | Target format (required) |
+| `-o <path>` | Output file path |
+| `--json` | Machine-readable JSON output |
+
+### `mill publish`
+
+| Flag | Description |
+|---|---|
+| `--target <dest>`, `-t` | Publish target (required) |
+| `-o <path>` | Output path |
+| `--json` | Machine-readable JSON output |
+
+### Other commands
+
+| Command | Description |
+|---|---|
+| `mill formats` | List available formats (`--json` for machine output) |
+| `mill serve [--port 9094] [--source <dir>]` | Start the export workbench UI |
+| `mill serve-mcp` | Start the MCP server on stdio |
+| `mill --version`, `-v` | Print version |
+
+## Available Formats (24)
+
+These are the export format modules in `lib/formats/`:
+
+| Format | File | Description |
+|---|---|---|
+| bibtex | `bibtex.js` | BibTeX bibliography entries |
+| changelog | `changelog.js` | Changelog generation |
+| csv | `csv.js` | Flat CSV table of claims |
+| dot | `dot.js` | Graphviz DOT graph |
+| evidence-matrix | `evidence-matrix.js` | Evidence matrix visualization |
+| executive-summary | `executive-summary.js` | Executive summary document |
+| github-issues | `github-issues.js` | GitHub Issues JSON payloads |
+| graphml | `graphml.js` | GraphML graph format |
+| html-report | `html-report.js` | Self-contained HTML report |
+| jira-csv | `jira-csv.js` | Jira-compatible CSV import |
+| json-ld | `json-ld.js` | JSON-LD linked data |
+| markdown | `markdown.js` | Clean Markdown document |
+| ndjson | `ndjson.js` | Newline-delimited JSON |
+| obsidian | `obsidian.js` | Obsidian vault notes |
+| opml | `opml.js` | OPML outline |
+| ris | `ris.js` | RIS citation format |
+| rss | `rss.js` | RSS feed |
+| sankey | `sankey.js` | Sankey diagram data |
+| slide-deck | `slide-deck.js` | Scroll-snap HTML presentation |
+| sql | `sql.js` | SQL INSERT statements |
+| static-site | `static-site.js` | Static site with index page |
+| treemap | `treemap.js` | Treemap visualization data |
+| typescript-defs | `typescript-defs.js` | TypeScript type definitions |
+| yaml | `yaml.js` | YAML export |
+
+## Publish Targets
+
+| Target | Description |
+|---|---|
+| `static` | Dark-themed static site from sprint outputs |
+| `clipboard` | Copy formatted output to system clipboard |

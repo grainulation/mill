@@ -26,12 +26,22 @@ npx @grainulation/mill publish --target clipboard output/brief.html
 
 ## Export formats
 
+24 built-in formats in `lib/formats/`. Most commonly used:
+
 | Format | Input | Output | Notes |
 |--------|-------|--------|-------|
 | `pdf` | HTML, Markdown | PDF | Uses `npx md-to-pdf` or puppeteer |
 | `csv` | claims.json | CSV | Flat columns, semicolon-joined tags |
 | `markdown` | HTML | Markdown | Zero-dep tag stripping, handles wheat output |
 | `json-ld` | claims.json | JSON-LD | schema.org vocab, wheat namespace |
+| `html-report` | claims.json | HTML | Self-contained interactive report |
+| `slide-deck` | claims.json | HTML | Scroll-snap presentation |
+| `github-issues` | claims.json | JSON | GitHub Issues payloads |
+| `jira-csv` | claims.json | CSV | Jira-compatible import |
+| `yaml` | claims.json | YAML | YAML export |
+| `ndjson` | claims.json | NDJSON | Newline-delimited JSON |
+
+Run `mill formats` to see all 24 formats and publish targets.
 
 ## Publish targets
 
@@ -51,10 +61,12 @@ Mill reads sprint output files directly. It does not require wheat to be install
 ## CLI reference
 
 ```
-mill export  --format <fmt> <file>              Export to target format
-mill publish --target <dest> <dir>              Publish sprint outputs
-mill convert --from <fmt> --to <fmt> <file>     Convert between formats
-mill formats                                    List available formats
+mill export    --format <fmt> <file>              Export to target format
+mill publish   --target <dest> <dir>              Publish sprint outputs
+mill convert   --from <fmt> --to <fmt> <file>     Convert between formats
+mill formats                                      List available formats
+mill serve     [--port 9094] [--source <dir>]     Start the export workbench UI
+mill serve-mcp                                    Start the MCP server on stdio
 ```
 
 All commands accept `-o <path>` to set the output location.
