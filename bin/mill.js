@@ -1,34 +1,50 @@
 #!/usr/bin/env node
 
-'use strict';
+"use strict";
 
-const path = require('node:path');
-const { parseArgs } = require('node:util');
-const { fork } = require('node:child_process');
+const path = require("node:path");
+const { parseArgs } = require("node:util");
+const { fork } = require("node:child_process");
 
-const LIB_DIR = path.join(__dirname, '..', 'lib');
+const LIB_DIR = path.join(__dirname, "..", "lib");
 
 // --version / -v: print version and exit
-if (process.argv.includes('--version') || process.argv.includes('-v')) {
-  const pkg = require(path.join(__dirname, '..', 'package.json'));
+if (process.argv.includes("--version") || process.argv.includes("-v")) {
+  const pkg = require(path.join(__dirname, "..", "package.json"));
   console.log(pkg.version);
   process.exit(0);
 }
 
-const verbose = process.argv.includes('--verbose');
+const verbose = process.argv.includes("--verbose");
 function vlog(...a) {
   if (!verbose) return;
   const ts = new Date().toISOString();
-  process.stderr.write(`[${ts}] mill: ${a.join(' ')}\n`);
+  process.stderr.write(`[${ts}] mill: ${a.join(" ")}\n`);
 }
 
 const COMMANDS = {
-  export: { description: 'Export artifacts to a target format', handler: runExport },
-  publish: { description: 'Publish sprint outputs to a destination', handler: runPublish },
-  convert: { description: 'Convert between artifact formats', handler: runConvert },
-  formats: { description: 'List available export formats', handler: runFormats },
-  serve: { description: 'Start the export workbench UI', handler: runServe },
-  'serve-mcp': { description: 'Start the MCP server on stdio', handler: null },
+  export: {
+    description: "Export artifacts to a target format",
+    handler: runExport,
+  },
+  publish: {
+    description: "Publish sprint outputs to a destination",
+    handler: runPublish,
+  },
+  convert: {
+    description: "Convert between artifact formats",
+    handler: runConvert,
+  },
+  formats: {
+    description: "List available export formats",
+    handler: runFormats,
+  },
+  "ci-artifacts": {
+    description: "Generate CI artifacts from compilation",
+    handler: runCiArtifacts,
+  },
+  serve: { description: "Start the export workbench UI", handler: runServe },
+  "serve-mcp": { description: "Start the MCP server on stdio", handler: null },
 };
 
 const USAGE = `
@@ -41,6 +57,7 @@ Usage:
   mill publish --target <dest> <dir>           Publish sprint outputs
   mill convert --from <fmt> --to <fmt> <file>  Convert between formats
   mill formats                                 List available formats
+  mill ci-artifacts <file> -o <dir>            Generate CI artifacts (report, summary, slides)
 
 Export formats:
   pdf        HTML or Markdown to PDF (via npx md-to-pdf)
@@ -59,14 +76,15 @@ Examples:
   npx @grainulation/mill export --format json-ld claims.json -o claims.jsonld
   npx @grainulation/mill publish --target static output/
   npx @grainulation/mill convert --from html --to markdown output/brief.html
+  npx @grainulation/mill ci-artifacts compilation.json -o ./artifacts
 `.trim();
 
 function main() {
   const args = process.argv.slice(2);
 
-  vlog('startup', `command=${args[0] || '(none)'}`, `cwd=${process.cwd()}`);
+  vlog("startup", `command=${args[0] || "(none)"}`, `cwd=${process.cwd()}`);
 
-  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+  if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
     console.log(USAGE);
     process.exit(0);
   }
@@ -74,20 +92,20 @@ function main() {
   const command = args[0];
   const handler = COMMANDS[command];
 
-  if (command === 'help') {
+  if (command === "help") {
     console.log(USAGE);
     process.exit(0);
   }
 
   // serve command forks the ESM server module
-  if (command === 'serve') {
+  if (command === "serve") {
     runServe(args.slice(1));
     return;
   }
 
   // serve-mcp command starts the MCP server on stdio
-  if (command === 'serve-mcp') {
-    const serveMcp = require('../lib/serve-mcp.js');
+  if (command === "serve-mcp") {
+    const serveMcp = require("../lib/serve-mcp.js");
     serveMcp.run(process.cwd());
     return;
   }
@@ -107,44 +125,46 @@ async function runExport(args) {
     ({ values, positionals } = parseArgs({
       args,
       options: {
-        format: { type: 'string', short: 'f' },
-        output: { type: 'string', short: 'o' },
-        json: { type: 'boolean', default: false },
+        format: { type: "string", short: "f" },
+        output: { type: "string", short: "o" },
+        json: { type: "boolean", default: false },
       },
       allowPositionals: true,
     }));
   } catch (err) {
-    if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
-      const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
-      console.error(`mill: unknown option: ${flag}. Run "mill export --help" for usage.`);
+    if (err.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION") {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || "unknown";
+      console.error(
+        `mill: unknown option: ${flag}. Run "mill export --help" for usage.`,
+      );
       process.exit(1);
     }
     throw err;
   }
 
   if (!values.format) {
-    console.error('mill: missing --format. Options: pdf, csv, markdown, json-ld');
+    console.error(
+      "mill: missing --format. Options: pdf, csv, markdown, json-ld",
+    );
     process.exit(1);
   }
 
   const inputFile = positionals[0];
   if (!inputFile) {
-    console.error('mill: missing input file.');
+    console.error("mill: missing input file.");
     process.exit(1);
   }
 
   const inputPath = path.resolve(inputFile);
   const format = values.format;
-  const outputPath = values.output
-    ? path.resolve(values.output)
-    : null;
+  const outputPath = values.output ? path.resolve(values.output) : null;
 
-  const formats = require('../lib/formats.js');
+  const formats = require("../lib/formats.js");
   const exporter = formats.getExporter(format);
 
   if (!exporter) {
     console.error(`mill: unknown format: ${format}`);
-    console.error(`Available: ${formats.listExportFormats().join(', ')}`);
+    console.error(`Available: ${formats.listExportFormats().join(", ")}`);
     process.exit(1);
   }
 
@@ -171,29 +191,31 @@ async function runPublish(args) {
     ({ values, positionals } = parseArgs({
       args,
       options: {
-        target: { type: 'string', short: 't' },
-        output: { type: 'string', short: 'o' },
-        json: { type: 'boolean', default: false },
+        target: { type: "string", short: "t" },
+        output: { type: "string", short: "o" },
+        json: { type: "boolean", default: false },
       },
       allowPositionals: true,
     }));
   } catch (err) {
-    if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
-      const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
-      console.error(`mill: unknown option: ${flag}. Run "mill publish --help" for usage.`);
+    if (err.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION") {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || "unknown";
+      console.error(
+        `mill: unknown option: ${flag}. Run "mill publish --help" for usage.`,
+      );
       process.exit(1);
     }
     throw err;
   }
 
   if (!values.target) {
-    console.error('mill: missing --target. Options: static, clipboard');
+    console.error("mill: missing --target. Options: static, clipboard");
     process.exit(1);
   }
 
   const inputDir = positionals[0];
   if (!inputDir) {
-    console.error('mill: missing input directory.');
+    console.error("mill: missing input directory.");
     process.exit(1);
   }
 
@@ -201,12 +223,12 @@ async function runPublish(args) {
   const target = values.target;
   const outputPath = values.output ? path.resolve(values.output) : null;
 
-  const formats = require('../lib/formats.js');
+  const formats = require("../lib/formats.js");
   const publisher = formats.getPublisher(target);
 
   if (!publisher) {
     console.error(`mill: unknown target: ${target}`);
-    console.error(`Available: ${formats.listPublishTargets().join(', ')}`);
+    console.error(`Available: ${formats.listPublishTargets().join(", ")}`);
     process.exit(1);
   }
 
@@ -233,30 +255,32 @@ async function runConvert(args) {
     ({ values, positionals } = parseArgs({
       args,
       options: {
-        from: { type: 'string' },
-        to: { type: 'string' },
-        output: { type: 'string', short: 'o' },
-        json: { type: 'boolean', default: false },
+        from: { type: "string" },
+        to: { type: "string" },
+        output: { type: "string", short: "o" },
+        json: { type: "boolean", default: false },
       },
       allowPositionals: true,
     }));
   } catch (err) {
-    if (err.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION') {
-      const flag = err.message.match(/option "([^"]+)"/)?.[1] || 'unknown';
-      console.error(`mill: unknown option: ${flag}. Run "mill convert --help" for usage.`);
+    if (err.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION") {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || "unknown";
+      console.error(
+        `mill: unknown option: ${flag}. Run "mill convert --help" for usage.`,
+      );
       process.exit(1);
     }
     throw err;
   }
 
   if (!values.from || !values.to) {
-    console.error('mill: missing --from and/or --to format.');
+    console.error("mill: missing --from and/or --to format.");
     process.exit(1);
   }
 
   const inputFile = positionals[0];
   if (!inputFile) {
-    console.error('mill: missing input file.');
+    console.error("mill: missing input file.");
     process.exit(1);
   }
 
@@ -264,7 +288,7 @@ async function runConvert(args) {
   const outputPath = values.output ? path.resolve(values.output) : null;
 
   // Convert is sugar: detect source, export to target
-  const formats = require('../lib/formats.js');
+  const formats = require("../lib/formats.js");
   const exporter = formats.getExporter(values.to);
 
   if (!exporter) {
@@ -290,31 +314,173 @@ async function runConvert(args) {
 }
 
 function runFormats(args) {
-  const jsonMode = (args || []).includes('--json');
-  const formats = require('../lib/formats.js');
+  const jsonMode = (args || []).includes("--json");
+  const formats = require("../lib/formats.js");
   if (jsonMode) {
-    console.log(JSON.stringify({
-      export_formats: formats.listExportFormats(),
-      publish_targets: formats.listPublishTargets(),
-    }));
+    console.log(
+      JSON.stringify({
+        export_formats: formats.listExportFormats(),
+        publish_targets: formats.listPublishTargets(),
+      }),
+    );
     return;
   }
-  console.log('Export formats:');
+  console.log("Export formats:");
   for (const f of formats.listExportFormats()) {
     console.log(`  ${f}`);
   }
-  console.log('\nPublish targets:');
+  console.log("\nPublish targets:");
   for (const t of formats.listPublishTargets()) {
     console.log(`  ${t}`);
   }
 }
 
+async function runCiArtifacts(args) {
+  const fs = require("node:fs");
+
+  let values, positionals;
+  try {
+    ({ values, positionals } = parseArgs({
+      args,
+      options: {
+        output: { type: "string", short: "o" },
+        formats: { type: "string", short: "f" },
+        summary: { type: "boolean", default: false },
+        json: { type: "boolean", default: false },
+      },
+      allowPositionals: true,
+    }));
+  } catch (err) {
+    if (err.code === "ERR_PARSE_ARGS_UNKNOWN_OPTION") {
+      const flag = err.message.match(/option "([^"]+)"/)?.[1] || "unknown";
+      console.error(
+        `mill: unknown option: ${flag}. Run "mill ci-artifacts --help" for usage.`,
+      );
+      process.exit(1);
+    }
+    throw err;
+  }
+
+  const inputFile = positionals[0];
+  if (!inputFile) {
+    console.error(
+      "mill: missing input file (compilation.json or claims.json).",
+    );
+    process.exit(1);
+  }
+
+  const inputPath = path.resolve(inputFile);
+  const outputDir = values.output
+    ? path.resolve(values.output)
+    : path.resolve("artifacts");
+
+  // Default CI formats: the three HTML formats plus markdown for step summary
+  const defaultFormats = ["html-report", "executive-summary", "slide-deck"];
+  const requestedFormats = values.formats
+    ? values.formats.split(",").map((f) => f.trim())
+    : defaultFormats;
+
+  // Read and parse input
+  let data;
+  try {
+    data = JSON.parse(fs.readFileSync(inputPath, "utf8"));
+  } catch (err) {
+    console.error(`mill: failed to read ${inputPath}: ${err.message}`);
+    process.exit(1);
+  }
+
+  // Normalize compilation vs claims
+  if (data.resolved_claims && (!data.claims || data.claims.length === 0)) {
+    data.claims = data.resolved_claims;
+  }
+  if (data.sprint_meta && !data.meta) {
+    data.meta = data.sprint_meta;
+  }
+
+  // Create output dir
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  // Discover ESM formats
+  const FORMATS_DIR = path.join(LIB_DIR, "formats");
+  const formatFiles = fs
+    .readdirSync(FORMATS_DIR)
+    .filter((f) => f.endsWith(".js"));
+  const formatMap = {};
+  for (const file of formatFiles) {
+    try {
+      const mod = await import(path.join(FORMATS_DIR, file));
+      formatMap[mod.name || file.replace(".js", "")] = mod;
+    } catch {}
+  }
+
+  const results = [];
+
+  for (const fmt of requestedFormats) {
+    const mod = formatMap[fmt];
+    if (!mod || typeof mod.convert !== "function") {
+      console.error(`mill: unknown format: ${fmt}`);
+      continue;
+    }
+
+    try {
+      const output = mod.convert(data);
+      const ext = mod.extension || ".txt";
+      const outFile = path.join(outputDir, fmt + ext);
+      fs.writeFileSync(outFile, output);
+      results.push({
+        format: fmt,
+        file: outFile,
+        bytes: Buffer.byteLength(output),
+      });
+      vlog(`wrote ${fmt} -> ${outFile}`);
+    } catch (err) {
+      console.error(`mill: ${fmt} conversion failed: ${err.message}`);
+    }
+  }
+
+  // Generate step summary (markdown) if --summary or GITHUB_STEP_SUMMARY is set
+  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+  if (values.summary || summaryPath) {
+    const mdMod = formatMap["markdown"];
+    if (mdMod && typeof mdMod.convert === "function") {
+      try {
+        const md = mdMod.convert(data);
+        if (summaryPath) {
+          fs.appendFileSync(summaryPath, md + "\n");
+          vlog("appended markdown to GITHUB_STEP_SUMMARY");
+        }
+        // Also write to output dir
+        const mdFile = path.join(outputDir, "step-summary.md");
+        fs.writeFileSync(mdFile, md);
+        results.push({
+          format: "markdown",
+          file: mdFile,
+          bytes: Buffer.byteLength(md),
+        });
+      } catch (err) {
+        console.error(`mill: step summary generation failed: ${err.message}`);
+      }
+    }
+  }
+
+  if (values.json) {
+    console.log(JSON.stringify({ artifacts: results }));
+  } else {
+    console.log(`mill: generated ${results.length} artifacts in ${outputDir}`);
+    for (const r of results) {
+      console.log(`  ${r.format}: ${r.file} (${r.bytes} bytes)`);
+    }
+  }
+}
+
 function runServe(args) {
-  const serverPath = path.join(LIB_DIR, 'server.js');
-  const child = fork(serverPath, args, { stdio: 'inherit' });
-  child.on('exit', (code) => process.exit(code ?? 0));
-  process.on('SIGTERM', () => child.kill('SIGTERM'));
-  process.on('SIGINT', () => child.kill('SIGINT'));
+  const serverPath = path.join(LIB_DIR, "server.js");
+  const child = fork(serverPath, args, { stdio: "inherit" });
+  child.on("exit", (code) => process.exit(code ?? 0));
+  process.on("SIGTERM", () => child.kill("SIGTERM"));
+  process.on("SIGINT", () => child.kill("SIGINT"));
 }
 
 main();
