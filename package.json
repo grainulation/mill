@@ -47,7 +47,7 @@
     "url": "git+https://github.com/grainulation/mill.git"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "bugs": {
     "url": "https://github.com/grainulation/mill/issues"
