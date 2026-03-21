@@ -20,7 +20,10 @@
     "bin/",
     "lib/",
     "public/",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md"
   ],
   "scripts": {
     "test": "node test/basic.test.js",
