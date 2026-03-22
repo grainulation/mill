@@ -48,40 +48,40 @@ mill publish --target clipboard output/brief.html
 
 24 built-in formats:
 
-| Format | Input | Output |
-|--------|-------|--------|
-| `pdf` | HTML, Markdown | PDF |
-| `csv` | claims.json | CSV |
-| `markdown` | HTML | Markdown |
-| `json-ld` | claims.json | JSON-LD (schema.org) |
-| `html-report` | claims.json | Interactive HTML report |
-| `slide-deck` | claims.json | Scroll-snap HTML presentation |
-| `github-issues` | claims.json | GitHub Issues JSON payloads |
-| `jira-csv` | claims.json | Jira-compatible CSV import |
-| `yaml` | claims.json | YAML |
-| `ndjson` | claims.json | Newline-delimited JSON |
-| `dot` | claims.json | Graphviz DOT |
-| `graphml` | claims.json | GraphML |
-| `bibtex` | claims.json | BibTeX citations |
-| `ris` | claims.json | RIS citations |
-| `rss` | claims.json | RSS feed |
-| `opml` | claims.json | OPML outline |
-| `obsidian` | claims.json | Obsidian vault |
-| `sql` | claims.json | SQL INSERT statements |
-| `typescript-defs` | claims.json | TypeScript type definitions |
-| `executive-summary` | claims.json | Executive summary HTML |
-| `evidence-matrix` | claims.json | Evidence tier matrix |
-| `changelog` | claims.json | Sprint changelog |
-| `sankey` | claims.json | Sankey diagram data |
-| `treemap` | claims.json | Treemap data |
+| Format              | Input          | Output                        |
+| ------------------- | -------------- | ----------------------------- |
+| `pdf`               | HTML, Markdown | PDF                           |
+| `csv`               | claims.json    | CSV                           |
+| `markdown`          | HTML           | Markdown                      |
+| `json-ld`           | claims.json    | JSON-LD (schema.org)          |
+| `html-report`       | claims.json    | Interactive HTML report       |
+| `slide-deck`        | claims.json    | Scroll-snap HTML presentation |
+| `github-issues`     | claims.json    | GitHub Issues JSON payloads   |
+| `jira-csv`          | claims.json    | Jira-compatible CSV import    |
+| `yaml`              | claims.json    | YAML                          |
+| `ndjson`            | claims.json    | Newline-delimited JSON        |
+| `dot`               | claims.json    | Graphviz DOT                  |
+| `graphml`           | claims.json    | GraphML                       |
+| `bibtex`            | claims.json    | BibTeX citations              |
+| `ris`               | claims.json    | RIS citations                 |
+| `rss`               | claims.json    | RSS feed                      |
+| `opml`              | claims.json    | OPML outline                  |
+| `obsidian`          | claims.json    | Obsidian vault                |
+| `sql`               | claims.json    | SQL INSERT statements         |
+| `typescript-defs`   | claims.json    | TypeScript type definitions   |
+| `executive-summary` | claims.json    | Executive summary HTML        |
+| `evidence-matrix`   | claims.json    | Evidence tier matrix          |
+| `changelog`         | claims.json    | Sprint changelog              |
+| `sankey`            | claims.json    | Sankey diagram data           |
+| `treemap`           | claims.json    | Treemap data                  |
 
 Run `mill formats` to see the full list with descriptions.
 
 ## Publish targets
 
-| Target | Output |
-|--------|--------|
-| `static` | Dark-themed static site in `_site/` |
+| Target      | Output                               |
+| ----------- | ------------------------------------ |
+| `static`    | Dark-themed static site in `_site/`  |
 | `clipboard` | System clipboard (pbcopy/xclip/clip) |
 
 ## CLI
@@ -107,16 +107,16 @@ Node built-in modules only. Heavy operations (PDF) run via `npx` on demand.
 
 ## Part of the grainulation ecosystem
 
-| Tool | Role |
-|------|------|
-| [wheat](https://github.com/grainulation/wheat) | Research engine -- grow structured evidence |
-| [farmer](https://github.com/grainulation/farmer) | Permission dashboard -- approve AI actions in real time |
-| [barn](https://github.com/grainulation/barn) | Shared tools -- templates, validators, sprint detection |
-| **mill** | Format conversion -- export to PDF, CSV, slides, 24 formats |
-| [silo](https://github.com/grainulation/silo) | Knowledge storage -- reusable claim libraries and packs |
-| [harvest](https://github.com/grainulation/harvest) | Analytics -- cross-sprint patterns and prediction scoring |
-| [orchard](https://github.com/grainulation/orchard) | Orchestration -- multi-sprint coordination and dependencies |
-| [grainulation](https://github.com/grainulation/grainulation) | Unified CLI -- single entry point to the ecosystem |
+| Tool                                                         | Role                                                        |
+| ------------------------------------------------------------ | ----------------------------------------------------------- |
+| [wheat](https://github.com/grainulation/wheat)               | Research engine -- grow structured evidence                 |
+| [farmer](https://github.com/grainulation/farmer)             | Permission dashboard -- approve AI actions in real time     |
+| [barn](https://github.com/grainulation/barn)                 | Shared tools -- templates, validators, sprint detection     |
+| **mill**                                                     | Format conversion -- export to PDF, CSV, slides, 24 formats |
+| [silo](https://github.com/grainulation/silo)                 | Knowledge storage -- reusable claim libraries and packs     |
+| [harvest](https://github.com/grainulation/harvest)           | Analytics -- cross-sprint patterns and prediction scoring   |
+| [orchard](https://github.com/grainulation/orchard)           | Orchestration -- multi-sprint coordination and dependencies |
+| [grainulation](https://github.com/grainulation/grainulation) | Unified CLI -- single entry point to the ecosystem          |
 
 ## License
 
