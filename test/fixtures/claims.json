@@ -11,7 +11,10 @@
       },
       "status": "active",
       "created": "2026-01-15",
-      "tags": ["node", "http"]
+      "tags": [
+        "node",
+        "http"
+      ]
     },
     {
       "id": "r002",
@@ -24,7 +27,9 @@
       },
       "status": "active",
       "created": "2026-01-16",
-      "tags": ["performance"]
+      "tags": [
+        "performance"
+      ]
     }
   ]
 }
