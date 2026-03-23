@@ -3,7 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@grainulation/mill"><img src="https://img.shields.io/npm/v/@grainulation/mill" alt="npm version"></a> <a href="https://www.npmjs.com/package/@grainulation/mill"><img src="https://img.shields.io/npm/dm/@grainulation/mill" alt="npm downloads"></a> <a href="https://github.com/grainulation/mill/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@grainulation/mill" alt="license"></a> <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/@grainulation/mill" alt="node"></a> <a href="https://github.com/grainulation/mill/actions"><img src="https://github.com/grainulation/mill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/@grainulation/mill"><img src="https://img.shields.io/npm/v/@grainulation/mill" alt="npm version"></a> <a href="https://www.npmjs.com/package/@grainulation/mill"><img src="https://img.shields.io/npm/dm/@grainulation/mill" alt="npm downloads"></a> <a href="https://github.com/grainulation/mill/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a> <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/@grainulation/mill" alt="node"></a> <a href="https://github.com/grainulation/mill/actions"><img src="https://github.com/grainulation/mill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://deepwiki.com/grainulation/mill"><img src="https://deepwiki.com/badge.svg" alt="Explore on DeepWiki"></a>
 </p>
 
 <p align="center"><strong>Turn sprint evidence into shareable artifacts.</strong></p>
