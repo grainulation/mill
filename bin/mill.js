@@ -406,7 +406,7 @@ async function runCiArtifacts(args) {
   const FORMATS_DIR = path.join(LIB_DIR, "formats");
   const formatFiles = fs
     .readdirSync(FORMATS_DIR)
-    .filter((f) => f.endsWith(".js"));
+    .filter((f) => f.endsWith(".mjs"));
   const formatMap = {};
   for (const file of formatFiles) {
     try {
