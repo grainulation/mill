@@ -411,7 +411,7 @@ async function runCiArtifacts(args) {
   for (const file of formatFiles) {
     try {
       const mod = await import(path.join(FORMATS_DIR, file));
-      formatMap[mod.name || file.replace(".js", "")] = mod;
+      formatMap[mod.name || file.replace(".mjs", "")] = mod;
     } catch {}
   }
 

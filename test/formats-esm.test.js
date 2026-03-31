@@ -18,7 +18,7 @@ const OPTIONAL_EXPORTS = ["mimeType", "description"];
 async function run() {
   console.log("formats ESM loading tests\n");
 
-  const files = fs.readdirSync(FORMATS_DIR).filter((f) => f.endsWith(".js"));
+  const files = fs.readdirSync(FORMATS_DIR).filter((f) => f.endsWith(".mjs"));
   assert.ok(
     files.length > 0,
     "Expected at least one format module in lib/formats/",
@@ -29,7 +29,7 @@ async function run() {
 
   for (const file of files) {
     const modulePath = path.join(FORMATS_DIR, file);
-    const formatName = file.replace(".js", "");
+    const formatName = file.replace(".mjs", "");
 
     try {
       const mod = await import(`file://${modulePath}`);
