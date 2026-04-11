@@ -476,7 +476,17 @@ async function runCiArtifacts(args) {
 }
 
 function runServe(args) {
+  const fs = require("node:fs");
   const serverPath = path.join(LIB_DIR, "server.js");
+  if (!fs.existsSync(serverPath)) {
+    console.error(
+      "mill: server.js is not included in the npm package.\n" +
+      "The serve command requires a full clone of the repository.\n\n" +
+      "  git clone https://github.com/grainulation/mill.git\n" +
+      "  cd mill && node bin/mill.js serve"
+    );
+    process.exit(1);
+  }
   const child = fork(serverPath, args, { stdio: "inherit" });
   child.on("exit", (code) => process.exit(code ?? 0));
   process.on("SIGTERM", () => child.kill("SIGTERM"));
