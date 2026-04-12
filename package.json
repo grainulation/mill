@@ -25,7 +25,8 @@
     "CHANGELOG.md",
     "LICENSE",
     "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md"
+    "CONTRIBUTING.md",
+    "public/grainulation-tokens.css"
   ],
   "scripts": {
     "test": "node test/basic.test.js",
