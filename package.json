@@ -15,18 +15,13 @@
   },
   "files": [
     "bin/",
-    "lib/index.js",
-    "lib/formats.js",
-    "lib/json-ld-common.js",
-    "lib/serve-mcp.js",
-    "lib/exporters/",
-    "lib/publishers/",
-    "lib/formats/",
+    "lib/",
+    "public/grainulation-tokens.css",
     "CHANGELOG.md",
     "LICENSE",
     "CODE_OF_CONDUCT.md",
     "CONTRIBUTING.md",
-    "public/grainulation-tokens.css"
+    "SECURITY.md"
   ],
   "scripts": {
     "test": "node test/basic.test.js && node test/formats-esm.test.js && node --test test/server.test.js test/ui-smoke.test.js",
