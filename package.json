@@ -16,7 +16,7 @@
   "files": [
     "bin/",
     "lib/",
-    "public/grainulation-tokens.css",
+    "public/",
     "CHANGELOG.md",
     "LICENSE",
     "CODE_OF_CONDUCT.md",
