@@ -18,7 +18,10 @@ const OPTIONAL_EXPORTS = ["mimeType", "description"];
 async function run() {
   console.log("formats ESM loading tests\n");
 
-  const files = fs.readdirSync(FORMATS_DIR).filter((f) => f.endsWith(".mjs"));
+  // Underscore-prefixed modules are shared utilities, not format converters.
+  const files = fs
+    .readdirSync(FORMATS_DIR)
+    .filter((f) => f.endsWith(".mjs") && !f.startsWith("_"));
   assert.ok(
     files.length > 0,
     "Expected at least one format module in lib/formats/",

@@ -29,7 +29,7 @@
     "public/grainulation-tokens.css"
   ],
   "scripts": {
-    "test": "node test/basic.test.js",
+    "test": "node test/basic.test.js && node test/formats-esm.test.js",
     "start": "node bin/mill.js",
     "serve": "node bin/mill.js serve"
   },
