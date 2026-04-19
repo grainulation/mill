@@ -33,6 +33,9 @@
     "start": "node bin/mill.js",
     "serve": "node bin/mill.js serve"
   },
+  "dependencies": {
+    "@grainulation/barn": "^1.2.0"
+  },
   "keywords": [
     "wheat",
     "sprint",
