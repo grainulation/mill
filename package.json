@@ -26,7 +26,9 @@
   "scripts": {
     "test": "node test/basic.test.js && node test/formats-esm.test.js && node --test test/server.test.js test/ui-smoke.test.js",
     "start": "node bin/mill.js",
-    "serve": "node bin/mill.js serve"
+    "serve": "node bin/mill.js serve",
+    "format": "npx prettier@3.3 --write .",
+    "format:check": "npx prettier@3.3 --check ."
   },
   "dependencies": {
     "@grainulation/barn": "^1.2.0"
