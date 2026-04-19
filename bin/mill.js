@@ -143,8 +143,9 @@ async function runExport(args) {
   }
 
   if (!values.format) {
+    const formats = require("../lib/formats.js");
     console.error(
-      "mill: missing --format. Options: pdf, csv, markdown, json-ld",
+      `mill: missing --format. Options: ${formats.listExportFormats().join(", ")}`,
     );
     process.exit(1);
   }
@@ -160,7 +161,7 @@ async function runExport(args) {
   const outputPath = values.output ? path.resolve(values.output) : null;
 
   const formats = require("../lib/formats.js");
-  const exporter = formats.getExporter(format);
+  const exporter = await formats.resolveFormat(format);
 
   if (!exporter) {
     console.error(`mill: unknown format: ${format}`);
@@ -289,10 +290,11 @@ async function runConvert(args) {
 
   // Convert is sugar: detect source, export to target
   const formats = require("../lib/formats.js");
-  const exporter = formats.getExporter(values.to);
+  const exporter = await formats.resolveFormat(values.to);
 
   if (!exporter) {
     console.error(`mill: unknown target format: ${values.to}`);
+    console.error(`Available: ${formats.listExportFormats().join(", ")}`);
     process.exit(1);
   }
 
