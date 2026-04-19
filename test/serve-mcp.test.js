@@ -92,15 +92,21 @@ function waitForResponse(child, timeout = 5_000) {
 
     function onData(chunk) {
       buf += chunk.toString();
-      const lines = buf.split("\n").filter((l) => l.trim());
-      if (lines.length > 0) {
-        clearTimeout(timer);
-        child.stdout.removeListener("data", onData);
-        try {
-          resolve(JSON.parse(lines[0]));
-        } catch (err) {
-          reject(new Error(`Parse error: ${err.message}\nRaw: ${buf}`));
-        }
+      // Only resolve on a COMPLETE newline-terminated line. Partial
+      // buffer would JSON.parse-fail for any response > 1 stdout chunk.
+      const newlineIdx = buf.indexOf("\n");
+      if (newlineIdx === -1) return;
+      const line = buf.slice(0, newlineIdx).trim();
+      if (!line) {
+        buf = buf.slice(newlineIdx + 1);
+        return;
+      }
+      clearTimeout(timer);
+      child.stdout.removeListener("data", onData);
+      try {
+        resolve(JSON.parse(line));
+      } catch (err) {
+        reject(new Error(`Parse error: ${err.message}\nRaw: ${line}`));
       }
     }
 
@@ -239,10 +245,7 @@ describe("mill MCP server — protocol basics", () => {
     try {
       let stdout = "";
       const firstChunk = new Promise((resolve, reject) => {
-        const timer = setTimeout(
-          () => reject(new Error("timeout")),
-          5_000,
-        );
+        const timer = setTimeout(() => reject(new Error("timeout")), 5_000);
         child.stdout.on("data", (chunk) => {
           stdout += chunk.toString();
           if (stdout.length > 0) {
@@ -255,7 +258,11 @@ describe("mill MCP server — protocol basics", () => {
         jsonrpc: "2.0",
         id: 1,
         method: "initialize",
-        params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "t", version: "0" } },
+        params: {
+          protocolVersion: "2024-11-05",
+          capabilities: {},
+          clientInfo: { name: "t", version: "0" },
+        },
       });
       await firstChunk;
       const trimmed = stdout.trimStart();
