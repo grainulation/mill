@@ -481,9 +481,9 @@ function runServe(args) {
   if (!fs.existsSync(serverPath)) {
     console.error(
       "mill: server.js is not included in the npm package.\n" +
-      "The serve command requires a full clone of the repository.\n\n" +
-      "  git clone https://github.com/grainulation/mill.git\n" +
-      "  cd mill && node bin/mill.js serve"
+        "The serve command requires a full clone of the repository.\n\n" +
+        "  git clone https://github.com/grainulation/mill.git\n" +
+        "  cd mill && node bin/mill.js serve",
     );
     process.exit(1);
   }
