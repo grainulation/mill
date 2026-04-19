@@ -102,9 +102,9 @@ All commands accept `-o <path>` to set the output location.
 
 Mill reads sprint output files directly. It does not require wheat -- give it HTML, Markdown, or claims JSON and it produces shareable formats.
 
-## Zero dependencies
+## Zero third-party dependencies
 
-Node built-in modules only. Heavy operations (PDF) run via `npx` on demand.
+Depends only on `@grainulation/barn` (internal ecosystem utilities); no third-party runtime deps. Node built-ins otherwise. Heavy operations (PDF) run via `npx` on demand.
 
 ## Part of the grainulation ecosystem
 
