@@ -5,6 +5,7 @@ public/*.css
 site/
 templates/
 test-output/
+test/fixtures/
 coverage/
 output/
 CHANGELOG.md
